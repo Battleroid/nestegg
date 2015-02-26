@@ -11,6 +11,7 @@ class Config(object):
 class Development(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
     SECRET_KEY = os.urandom(64)
 
 class Testing(Config):

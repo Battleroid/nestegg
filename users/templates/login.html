@@ -2,17 +2,15 @@
 
 {% block content %}
     <form action="{{ url_for('users.login') }}" method="post">
-    {{ form.hidden_tag() }}
-        <div class="form-group">
-            <label for="{{ form.username.name }}">{{ form.username.label }}</label>
-            {{ form.username(class='form-control', placeholder='johnsmith', **{'required':'', 'autofocus':''}) }}
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="six columns">
+                <label for="{{ form.username.name }}">{{ form.username.label }}</label>
+                {{ form.username(class='u-full-width', **{'required':'', 'autofocus':''}) }}
+                <label for="{{ form.password.name }}">{{ form.password.label }}</label>
+                {{ form.password(class='u-full-width', **{'required':''}) }}
+            </div>
         </div>
-        <div class="form-group">
-            <label for="{{ form.password.name }}">{{ form.password.label }}</label>
-            {{ form.password(class='form-control', placeholder='password', **{'required':''}) }}
-        </div>
-        <div class="form-group">
-            {{ form.submit(class='btn btn-default') }}
-        </div>
+        {{ form.submit(class='button-primary') }}
     </form>
 {% endblock %}

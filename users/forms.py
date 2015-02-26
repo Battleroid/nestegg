@@ -1,7 +1,7 @@
 from flask_wtf import Form, RecaptchaField
 from flask_wtf.file import FileField
 from wtforms.validators import Length, DataRequired, EqualTo, Email, Optional
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 
 class LoginForm(Form):
     username = StringField('Username', [DataRequired()])
@@ -19,11 +19,11 @@ class RegisterForm(Form):
 class UploadForm(Form):
     photo = FileField('Photo')
     title = StringField('Title', [DataRequired(), Length(1, 255)])
-    desc = StringField('Description (optional)', [Optional()])
+    desc = TextAreaField('Description (optional)', [Optional()])
     submit = SubmitField('Upload')
 
 class EditProfile(Form):
-    about = StringField('About Me', [Optional(), Length(max=512)])
+    about = TextAreaField('About Me', [Optional(), Length(max=512)])
     email = StringField('Email', [Optional(), Email(message=None)])
     password = PasswordField('Password', [DataRequired()])
     submit = SubmitField('Save Changes')

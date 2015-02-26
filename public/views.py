@@ -6,6 +6,17 @@ public_blueprint = Blueprint(
     template_folder='templates'
 )
 
+@public_blueprint.route('/tos')
+def tos():
+    pass
+
+@public_blueprint.route('/privacy')
+def privacy():
+    pass
+
+@public_blueprint.route('/about')
+def about():
+    pass
 
 @public_blueprint.route('/')
 def index():

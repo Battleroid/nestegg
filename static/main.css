@@ -1,0 +1,73 @@
+header {
+    margin-top: 1em;
+}
+
+header h3 {
+    font-size: 2em;
+}
+
+header h3 a, header h3 a:hover {
+    text-decoration: none;
+    color: #000;
+    font-weight: 300;
+}
+
+nav ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+nav ul li {
+    display: inline-block;
+}
+
+nav li a {
+	padding: 5px 7px;
+}
+
+nav li a:first-child {
+	padding-left: 0px;
+}
+
+nav li:after {
+	color: #bbb;
+	content: "/";
+	padding-right: 2px;
+}
+
+nav li:last-child:after {
+	content: "";
+}
+
+a {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+main .container {
+    margin-bottom: 1em;
+}
+
+footer .container {
+    border-top: 1px solid #eee;
+    color: #888888;
+    padding: 15px;
+    font-size: 12px;
+    text-align: center;
+}
+
+footer a {
+    color: #888888;
+    font-weight: normal;
+}
+
+.well {
+    padding: 10px;
+    background: #eee;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}

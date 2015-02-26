@@ -6,6 +6,7 @@ public_blueprint = Blueprint(
     template_folder='templates'
 )
 
+
 @public_blueprint.route('/')
 def index():
     gallery = File.query.limit(10).all()

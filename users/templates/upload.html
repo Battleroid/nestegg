@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{{ url_for('users.upload_file') }}" method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="{{ form.title.name }}">{{ form.title.label }}</label>
+            {{ form.title(class='form-control', placeholder='My Cat', **{'required':'', 'autofocus':''}) }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.desc.name }}">{{ form.desc.label }}</label>
+            {{ form.desc(class='form-control', placeholder='He is a fat fluffy cat. I think we do not feed him enough') }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.photo.name }}">{{ form.photo.label }}</label>
+            {{ form.photo(**{'required':''}) }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class='btn btn-default') }}
+        </div>
+    </form>
+{% endblock %}

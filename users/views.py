@@ -1,8 +1,9 @@
+import os
 from flask import render_template, Blueprint, request, flash, redirect, url_for
-from flask_login import logout_user, login_required, login_user
+from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
-from .forms import LoginForm, RegisterForm
-from models import User
+from .forms import LoginForm, RegisterForm, UploadForm
+from models import User, File
 from nestegg import db
 
 users_blueprint = Blueprint(
@@ -10,19 +11,34 @@ users_blueprint = Blueprint(
     template_folder='templates'
 )
 
+@users_blueprint.route('/cp', methods=['GET', 'POST'])
+@login_required
+def control_panel():
+    return 'cp'
+
 @users_blueprint.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
-    pass
+    form = UploadForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        f = File(form.title.data, form.desc.data, form.photo.data.rsplit('.')[-1])
+        current_user.files.append(f)
+        # see: http://stackoverflow.com/questions/27611827/attributeerror-filefield-object-has-no-attribute-file
+        # form.photo.file.save(os.path.join(app.config['UPLOADS_DIRECTORY'], f.filename))
+        db.session.add(f)
+        db.session.commit()
+        flash('File %s uploaded!' % f.name)
+    return render_template('upload.html', title='Upload File', form=form)
 
 @users_blueprint.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     pass
 
-@users_blueprint.route('/profile')
-def profile():
-    pass
+@users_blueprint.route('/profile/<username>')
+def view_profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('profile.html', title='Public Profile of ' + user.username, user=user)
 
 @users_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
@@ -32,6 +48,7 @@ def login():
         if user is not None and user.check_password(form.password.data):
             login_user(user)
             flash('Welcome back, %s.' % user.username)
+            redirect(request.args.get('next') or url_for('public.index'))
         else:
             flash('Invalid username or password.', 'error')
     return render_template('login.html', form=form, title='Login')

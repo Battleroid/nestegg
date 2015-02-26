@@ -1,5 +1,6 @@
 from flask_wtf import Form, RecaptchaField
-from wtforms.validators import Length, DataRequired, EqualTo, Email
+from flask_wtf.file import FileField
+from wtforms.validators import Length, DataRequired, EqualTo, Email, Optional
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 
 class LoginForm(Form):
@@ -14,3 +15,9 @@ class RegisterForm(Form):
     email = StringField('Email Address', [DataRequired(), Email(message=None)])
     recaptcha = RecaptchaField()
     submit = SubmitField('Sign Up')
+
+class UploadForm(Form):
+    photo = FileField('Photo')
+    title = StringField('Title', [DataRequired(), Length(1, 255)])
+    desc = StringField('Description (optional)', [Optional()])
+    submit = SubmitField('Upload')

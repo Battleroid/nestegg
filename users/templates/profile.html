@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>{{ user.username | capitalize }}'s Profile</h3>
+    {% if user.about %}
+        {{ user.about }}
+    {% else %}
+        <p>Sorry, this member has nothing to say at this time!</p>
+    {% endif %}
+    {% if not user.files.count() %}
+        <p>This user has not uploaded anything yet!</p>
+    {% else %}
+        <p>{{ user.username }} has a total of {{ user.files.count() }}(s).</p>
+    {% endif %}
+{% endblock %}

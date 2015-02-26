@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if not gallery %}
+        <div class="container">
+            <h1>Welcome to Nestegg</h1>
+            <p>Join today and show off your creations to the world!</p>
+        </div>
+    {% else %}
+        {% for file in gallery %}
+            {{ file.name }}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

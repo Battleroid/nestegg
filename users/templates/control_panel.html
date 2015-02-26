@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="row">
+    <div class="row cp">
         <div class="panel one-half column">
             <h4>About You</h4>
             {{ current_user.registered_at | timesince }}
@@ -10,9 +10,9 @@
             <h4>Payment Info</h4>
         </div>
     </div>
-    <div class="row">
+    <div class="row cp">
         <div class="panel">
-            <h4>Files ({{ current_user.files.count() }}</h4>
+            <h4>Files ({{ current_user.files.count() }})</h4>
             {% if current_user.files.count() == 0 %}
                 <p>You haven't uploaded anything yet!</p>
             {% else %}

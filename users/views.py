@@ -2,7 +2,7 @@ import os
 from flask import render_template, Blueprint, request, flash, redirect, url_for
 from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
-from .forms import LoginForm, RegisterForm, UploadForm
+from .forms import LoginForm, RegisterForm, UploadForm, EditProfile
 from models import User, File
 from nestegg import db
 
@@ -11,12 +11,17 @@ users_blueprint = Blueprint(
     template_folder='templates'
 )
 
-@users_blueprint.route('/cp', methods=['GET', 'POST'])
+@users_blueprint.route('/profile/cp', methods=['GET', 'POST'])
 @login_required
 def control_panel():
-    return 'cp'
+    return render_template('control_panel.html', title='Control Panel')
 
-@users_blueprint.route('/upload', methods=['GET', 'POST'])
+@users_blueprint.route('/profile/pro', methods=['GET', 'POST'])
+@login_required
+def pro():
+    pass
+
+@users_blueprint.route('/profile/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
     form = UploadForm()
@@ -33,9 +38,14 @@ def upload_file():
 @users_blueprint.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    pass
+    form = EditProfile()
+    if request.method == 'POST' and form.validate_on_submit():
+        if current_user.check_password(form.password.data):
+            current_user.about = form.about.data
+            db.session.commit()
+    return render_template('edit_profile.html', title='Edit Profile', form=form)
 
-@users_blueprint.route('/profile/<username>')
+@users_blueprint.route('/view/profile/<username>')
 def view_profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('profile.html', title='Public Profile of ' + user.username, user=user)

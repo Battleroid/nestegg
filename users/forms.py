@@ -21,3 +21,9 @@ class UploadForm(Form):
     title = StringField('Title', [DataRequired(), Length(1, 255)])
     desc = StringField('Description (optional)', [Optional()])
     submit = SubmitField('Upload')
+
+class EditProfile(Form):
+    about = StringField('About Me', [Optional(), Length(max=512)])
+    email = StringField('Email', [Optional(), Email(message=None)])
+    password = PasswordField('Password', [DataRequired()])
+    submit = SubmitField('Save Changes')

@@ -71,3 +71,7 @@ footer a {
     border-radius: 3px;
     margin-bottom: 10px;
 }
+
+div.panel h4 {
+    border-bottom: 1px solid #eee;
+}

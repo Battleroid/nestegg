@@ -4,6 +4,7 @@ from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
 from .forms import LoginForm, RegisterForm, UploadForm, EditProfile
 from models import User, File
+import humanize
 from nestegg import db
 
 users_blueprint = Blueprint(
@@ -90,3 +91,7 @@ def register():
     else:
         flash('Errors in form', 'error')
     return render_template('register.html', form=form, title='Register')
+
+@users_blueprint.app_template_filter()
+def timesince(z):
+    return humanize.naturaltime(z)

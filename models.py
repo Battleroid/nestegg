@@ -12,6 +12,9 @@ class User(db.Model):
     confirmed = db.Column(db.Boolean, default=False)
     about = db.Column(db.Text(1000))
     registered_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    pro_status = db.Column(db.Boolean, server_default='0')
+    pro_expiration = db.Column(db.DateTime, nullable=True)
+    stripe_token = db.Column(db.String(255), nullable=True, unique=True)
     files = db.relationship('File', backref='user', lazy='dynamic')
 
     def __init__(self, username, password, email):

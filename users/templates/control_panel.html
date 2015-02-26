@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    Control Panel
+    <div class="row">
+        <div class="panel one-half column">
+            <h4>About You</h4>
+            {{ current_user.registered_at | timesince }}
+        </div>
+        <div class="panel one-half column">
+            <h4>Payment Info</h4>
+        </div>
+    </div>
 {% endblock %}

@@ -10,4 +10,16 @@
             <h4>Payment Info</h4>
         </div>
     </div>
+    <div class="row">
+        <div class="panel">
+            <h4>Files ({{ current_user.files.count() }}</h4>
+            {% if current_user.files.count() == 0 %}
+                <p>You haven't uploaded anything yet!</p>
+            {% else %}
+                {% for file in current_user.files %}
+                    {{ file.name }}, {{ file.desc }}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

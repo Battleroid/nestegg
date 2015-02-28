@@ -1,8 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_compress import Compress
 from flask_bcrypt import Bcrypt
 from flask_cache import Cache
 from flask_login import LoginManager
+from flask_assets import Environment, Bundle
 from flask import Flask, render_template
 
 # Flask
@@ -17,12 +17,14 @@ bc = Bcrypt(app)
 # Cache
 cache = Cache(app, config={'CACHE_TYPE': 'redis'})
 
+# Assets
+assets = Environment(app)
+css = Bundle('main.css', 'normalize.css', 'skeleton.css', filters='cssmin', output='min/default.css')
+assets.register('css_min', css)
+
 # Login Manager
 lm = LoginManager()
 lm.init_app(app)
-
-# Compress
-compress = Compress(app)
 
 # Blueprints
 from public.views import public_blueprint
@@ -35,6 +37,9 @@ app.register_blueprint(users_blueprint)
 def not_found(e):
     return render_template('404.html', error=e)
 
+@app.errorhandler(501)
+@app.errorhandler(502)
+@app.errorhandler(503)
 @app.errorhandler(500)
 def server_error(e):
     return render_template('50x.html', error=e)
@@ -46,4 +51,5 @@ lm.login_view = 'users.login'
 
 @lm.user_loader
 def load_user(user_id):
-    return User.query.filter_by(id=int(user_id)).first()
+    # return User.query.filter_by(id=int(user_id)).first()
+    return User.query.get(user_id)

@@ -12,7 +12,7 @@
     </div>
     <div class="row">
         <div class="panel">
-            <h4>Files ({{ current_user.files.count() }}</h4>
+            <h4>Files ({{ current_user.files.count() }})</h4>
             {% if current_user.files.count() == 0 %}
                 <p>You haven't uploaded anything yet!</p>
             {% else %}

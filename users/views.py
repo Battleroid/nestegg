@@ -43,6 +43,9 @@ def edit_profile():
     if request.method == 'POST' and form.validate_on_submit():
         if current_user.check_password(form.password.data):
             current_user.about = form.about.data
+            if current_user.email != form.email.data:
+                # confirmation email deal
+                pass
             db.session.commit()
     return render_template('edit_profile.html', title='Edit Profile', form=form)
 
@@ -60,7 +63,7 @@ def login():
             login_user(user)
             flash('Welcome back, %s.' % user.username)
             next = request.args.get('next')
-            return redirect(url_for('users.control_panel'))
+            return redirect(next or url_for('users.control_panel'))
         else:
             flash('Invalid username or password.', 'error')
     return render_template('login.html', form=form, title='Login')

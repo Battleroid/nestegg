@@ -1,3 +1,6 @@
+static/min
+.webassets-cache
+*.webassets-cache
 .idea
 *.swp
 *.db

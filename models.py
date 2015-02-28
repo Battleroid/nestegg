@@ -10,11 +10,13 @@ class User(db.Model):
     _pw = db.Column('password', db.String(255), nullable=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     confirmed = db.Column(db.Boolean, default=False)
+    first_name = db.Column(db.String(50), nullable=True)
+    last_name = db.Column(db.String(50), nullable=True)
     about = db.Column(db.Text(1000))
-    registered_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    registered_at = db.Column(db.DateTime, default=datetime.datetime.now())
+    stripe_token = db.Column(db.String(255), nullable=True, unique=True)
     pro_status = db.Column(db.Boolean, server_default='0')
     pro_expiration = db.Column(db.DateTime, nullable=True)
-    stripe_token = db.Column(db.String(255), nullable=True, unique=True)
     files = db.relationship('File', backref='user', lazy='dynamic')
 
     def __init__(self, username, password, email):
@@ -31,9 +33,6 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
-    def get_id(self):
-        return unicode(self.id)
-
     def check_password(self, value):
         return bc.check_password_hash(self._pw, value)
 
@@ -44,6 +43,9 @@ class User(db.Model):
     @password.setter
     def set_password(self, plain):
         self._pw = bc.generate_password_hash(plain)
+
+    def get_id(self):
+        return unicode(self.id)
 
     def __repr__(self):
         return '<User %r %r>' % (self.username, self.email)

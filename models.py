@@ -50,6 +50,9 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r %r>' % (self.username, self.email)
 
+    def __unicode__(self):
+        return self.username
+
 
 class File(db.Model):
     __tablename__ = 'files'

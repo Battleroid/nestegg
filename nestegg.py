@@ -51,5 +51,4 @@ lm.login_view = 'users.login'
 
 @lm.user_loader
 def load_user(user_id):
-    # return User.query.filter_by(id=int(user_id)).first()
     return User.query.get(user_id)

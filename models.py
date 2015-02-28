@@ -11,7 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(255), nullable=False, unique=True)
     confirmed = db.Column(db.Boolean, default=False)
     about = db.Column(db.Text(1000))
-    registered_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+    registered_at = db.Column(db.DateTime, default=datetime.datetime.now())
     pro_status = db.Column(db.Boolean, server_default='0')
     pro_expiration = db.Column(db.DateTime, nullable=True)
     stripe_token = db.Column(db.String(255), nullable=True, unique=True)
@@ -47,6 +47,12 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r %r>' % (self.username, self.email)
+
+    def get_id(self):
+        return self.id
+
+    def __unicode__(self):
+        return self.username
 
 
 class File(db.Model):

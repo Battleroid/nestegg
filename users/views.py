@@ -59,7 +59,7 @@ def login():
         if user is not None and user.check_password(form.password.data):
             login_user(user)
             flash('Welcome back, %s.' % user.username)
-            next = request.args.get('next')
+            # next = request.args.get('next')
             return redirect(url_for('users.control_panel'))
         else:
             flash('Invalid username or password.', 'error')

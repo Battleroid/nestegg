@@ -4,7 +4,9 @@
     <div class="row cp">
         <div class="panel one-half column">
             <h4>About You</h4>
-            {{ current_user.registered_at | timesince }}
+            You registered your account: {{ current_user.registered_at | timesince }}
+            <br>
+            {% if current_user.about %}About:<div class="well">{{ current_user.about }}</div>{% else %}You haven't written an about yet!{% endif %}
         </div>
         <div class="panel one-half column">
             <h4>Payment Info</h4>

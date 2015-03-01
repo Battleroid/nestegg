@@ -1,3 +1,4 @@
+import os
 import click
 from flask_debugtoolbar import DebugToolbarExtension
 from nestegg import db, app
@@ -20,6 +21,13 @@ def run(config, host, port):
     app.config.from_object('config.%s' % c[config])
     dbg = DebugToolbarExtension(app)
     app.run(host=host, port=port)
+
+@main.command()
+def setup_dirs():
+    """Create required directories required to store files and etc."""
+    app.config.from_object('config.Config')
+    if not os.path.exists(app.config['UPLOAD_DIRECTORY']):
+        os.mkdir(app.config['UPLOAD_DIRECTORY'])
 
 @main.command()
 @click.option('--yes', is_flag=True, expose_value=False, callback=abort_if_false, prompt='Are you sure you want to reset the database?')

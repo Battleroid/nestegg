@@ -1,7 +1,8 @@
 from flask_wtf import Form, RecaptchaField
-from flask_wtf.file import FileField
+from flask_wtf.html5 import EmailField
+from flask_wtf.file import FileField, FileRequired
 from wtforms.validators import Length, DataRequired, EqualTo, Email, Optional
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 
 class LoginForm(Form):
     username = StringField('Username', [DataRequired()])
@@ -12,18 +13,21 @@ class RegisterForm(Form):
     username = StringField('Username', [DataRequired(), Length(4, 20)])
     password = PasswordField('Password', [DataRequired(), Length(8, 255)])
     confirm = PasswordField('Confirm Password', [DataRequired(), EqualTo('password', 'Passwords must match.')])
-    email = StringField('Email Address', [DataRequired(), Email(message=None)])
+    email = StringField('Email Address', [DataRequired(), Email(message='Not a valid email.')])
+    agree_to_tos = BooleanField('I agree to the Terms of Service', [DataRequired()])
     recaptcha = RecaptchaField()
     submit = SubmitField('Sign Up')
 
 class UploadForm(Form):
-    photo = FileField('Photo')
+    photo = FileField('Photo', [FileRequired('You need to upload an image!')])
     title = StringField('Title', [DataRequired(), Length(1, 255)])
     desc = TextAreaField('Description (optional)', [Optional()])
     submit = SubmitField('Upload')
 
 class EditProfile(Form):
+    first_name = StringField('First name', [Optional(), Length(max=50)])
+    last_name = StringField('Last name', [Optional(), Length(max=50)])
     about = TextAreaField('About Me', [Optional(), Length(max=512)])
-    email = StringField('Email', [Optional(), Email(message=None)])
+    email = EmailField('Email', [Optional(), Email(message='Not a valid email.')])
     password = PasswordField('Password', [DataRequired()])
     submit = SubmitField('Save Changes')

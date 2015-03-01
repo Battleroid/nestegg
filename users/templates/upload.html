@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="{{ url_for('users.upload_file') }}" method="post">
+    <form enctype="multipart/form-data" action="{{ url_for('users.upload_file') }}" method="post">
         {{ form.hidden_tag() }}
         <div class="row">
             <div class="one-half column">
                 <label for="{{ form.title.name }}">{{ form.title.label }}</label>
-                {{ form.title(class='u-full-width', placeholder='My Cat', **{'required':'', 'autofocus':''}) }}
+                {{ form.title(class='u-full-width', **{'required':'', 'autofocus':''}) }}
                 <label for="{{ form.desc.name }}">{{ form.desc.label }}</label>
-                {{ form.desc(class='u-full-width', placeholder='He is a fat fluffy cat. I think we do not feed him enough.') }}
+                {{ form.desc(class='u-full-width') }}
                 <label for="{{ form.photo.name }}">{{ form.photo.label }}</label>
                 {{ form.photo(**{'required':''}) }}
             </div>

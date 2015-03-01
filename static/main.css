@@ -1,5 +1,16 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,500,700,300);
+
+body {
+    font: 16px/2em Roboto, "Open Sans", Helvetica, Arial, sans-serif;
+}
+
 header {
     margin-top: 1em;
+}
+
+h4 small.edit a {
+    font-size: 0.7em;
+    font-weight: 500;
 }
 
 header h3 {

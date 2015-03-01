@@ -5,7 +5,7 @@ from sqlalchemy import exc
 from .forms import LoginForm, RegisterForm, UploadForm, EditProfile
 from models import User, File
 import humanize
-from nestegg import db
+from nestegg import db, app
 
 users_blueprint = Blueprint(
     'users', __name__,
@@ -17,6 +17,12 @@ users_blueprint = Blueprint(
 def control_panel():
     return render_template('control_panel.html', title='Control Panel')
 
+@users_blueprint.route('/profile/gallery/')
+@users_blueprint.route('/profile/gallery/<int:page>')
+@login_required
+def gallery(page=1):
+    pass
+
 @users_blueprint.route('/profile/pro', methods=['GET', 'POST'])
 @login_required
 def pro():
@@ -27,10 +33,9 @@ def pro():
 def upload_file():
     form = UploadForm()
     if request.method == 'POST' and form.validate_on_submit():
-        f = File(form.title.data, form.desc.data, form.photo.data.rsplit('.')[-1])
+        f = File(form.title.data, form.desc.data, form.photo.data.filename.rsplit('.')[-1])
+        form.photo.data.save(os.path.join(app.config['UPLOAD_DIRECTORY'], f.filename))
         current_user.files.append(f)
-        # see: http://stackoverflow.com/questions/27611827/attributeerror-filefield-object-has-no-attribute-file
-        # form.photo.file.save(os.path.join(app.config['UPLOADS_DIRECTORY'], f.filename))
         db.session.add(f)
         db.session.commit()
         flash('File %s uploaded!' % f.name)
@@ -42,9 +47,15 @@ def edit_profile():
     form = EditProfile()
     if request.method == 'POST' and form.validate_on_submit():
         if current_user.check_password(form.password.data):
-            current_user.about = form.about.data
-            if current_user.email != form.email.data:
+            if form.about.data:
+                current_user.about = form.about.data
+            if form.first_name.data:
+                current_user.first_name = form.first_name.data
+            if form.last_name.data:
+                current_user.last_name = form.last_name.data
+            if form.email.data and current_user.email != form.email.data:
                 # confirmation email deal
+                print '*** EMAIL ADDRESS CHANGED, SEND CONFIRMATION'
                 pass
             db.session.commit()
     return render_template('edit_profile.html', title='Edit Profile', form=form)

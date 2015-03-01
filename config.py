@@ -5,8 +5,6 @@ class Config(object):
     RECAPTCHA_PUBLIC_KEY = '6LfrqAETAAAAAO_BbffXgjLZJ_iEOHNgGBy5Jo2z'
     RECAPTCHA_PRIVATE_KEY = '6LfrqAETAAAAABe7HiBUZAMy9M-lp7kunMwp42eB'
     IMAGES = set(['jpg', 'jpeg', 'png', 'gif'])
-    MAX_FREE_FILE_SIZE = 3 * 1024 * 1024
-    MAX_PRO_FILE_SIZE = 6 * 1024 * 1024
     TESTING = False
     DEBUG = False
     UPLOAD_DIRECTORY = 'files'

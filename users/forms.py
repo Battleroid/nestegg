@@ -1,7 +1,7 @@
 from flask_wtf import Form, RecaptchaField
 from flask_wtf.html5 import EmailField
 from flask_wtf.file import FileField, FileRequired
-from wtforms.validators import Length, DataRequired, EqualTo, Email, Optional
+from wtforms.validators import Length, DataRequired, EqualTo, Email, Optional, InputRequired
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 
 class LoginForm(Form):
@@ -14,7 +14,7 @@ class RegisterForm(Form):
     password = PasswordField('Password', [DataRequired(), Length(8, 255)])
     confirm = PasswordField('Confirm Password', [DataRequired(), EqualTo('password', 'Passwords must match.')])
     email = StringField('Email Address', [DataRequired(), Email(message='Not a valid email.')])
-    agree_to_tos = BooleanField('I agree to the Terms of Service', [DataRequired()])
+    agree_to_tos = BooleanField('I agree to the Terms of Service', [InputRequired()])
     recaptcha = RecaptchaField()
     submit = SubmitField('Sign Up')
 

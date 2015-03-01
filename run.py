@@ -23,6 +23,23 @@ def run(config, host, port):
     app.run(host=host, port=port)
 
 @main.command()
+@click.option('--yes', is_flag=True, expose_value=False, callback=abort_if_false, prompt='Are you sure you want to remove all static files?', help='Do not prompt for removal.')
+@click.option('--remove-directory', is_flag=True, help='Remove directory after finishing.')
+def clear_dirs(remove_directory):
+    """Clear required directories for file storage."""
+    app.config.from_object('config.Config')
+    if os.path.exists(app.config['UPLOAD_DIRECTORY']):
+        for f in os.listdir(app.config['UPLOAD_DIRECTORY']):
+            fp = os.path.join(app.config['UPLOAD_DIRECTORY'], f)
+            try:
+                if os.path.isfile(fp):
+                    os.unlink(fp)
+            except Exception, e:
+                print e
+    if remove_directory:
+        os.rmdir(app.config['UPLOAD_DIRECTORY'])
+
+@main.command()
 def setup_dirs():
     """Create required directories required to store files and etc."""
     app.config.from_object('config.Config')
@@ -30,7 +47,7 @@ def setup_dirs():
         os.mkdir(app.config['UPLOAD_DIRECTORY'])
 
 @main.command()
-@click.option('--yes', is_flag=True, expose_value=False, callback=abort_if_false, prompt='Are you sure you want to reset the database?')
+@click.option('--yes', is_flag=True, expose_value=False, callback=abort_if_false, prompt='Are you sure you want to reset the database?', help='Do not prompt for reset.')
 def reset():
     """Reset Nestegg database."""
     app.config.from_object('config.Config')

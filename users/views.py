@@ -4,8 +4,8 @@ from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
 from .forms import LoginForm, RegisterForm, UploadForm, EditProfile
 from models import User, File
+from nestegg import app, db
 import humanize
-from nestegg import db, app
 
 users_blueprint = Blueprint(
     'users', __name__,
@@ -33,6 +33,7 @@ def pro():
 def upload_file():
     form = UploadForm()
     if request.method == 'POST' and form.validate_on_submit():
+        # f_size = len(form.photo.data.stream.read()) for file size
         f = File(form.title.data, form.desc.data, form.photo.data.filename.rsplit('.')[-1])
         form.photo.data.save(os.path.join(app.config['UPLOAD_DIRECTORY'], f.filename))
         current_user.files.append(f)
@@ -44,20 +45,16 @@ def upload_file():
 @users_blueprint.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfile()
+    form = EditProfile(obj=current_user)
     if request.method == 'POST' and form.validate_on_submit():
         if current_user.check_password(form.password.data):
-            if form.about.data:
-                current_user.about = form.about.data
-            if form.first_name.data:
-                current_user.first_name = form.first_name.data
-            if form.last_name.data:
-                current_user.last_name = form.last_name.data
-            if form.email.data and current_user.email != form.email.data:
-                # confirmation email deal
-                print '*** EMAIL ADDRESS CHANGED, SEND CONFIRMATION'
+            current_user.first_name = form.first_name.data if form.first_name.data else current_user.first_name
+            current_user.last_name = form.last_name.data if form.last_name.data else current_user.last_name
+            current_user.about = form.about.data if form.about.data else current_user.about
+            if form.email.data and (current_user.email != form.email.data):
                 pass
             db.session.commit()
+            flash('Changes saved.')
     return render_template('edit_profile.html', title='Edit Profile', form=form)
 
 @users_blueprint.route('/view/profile/<username>')
@@ -73,8 +70,7 @@ def login():
         if user is not None and user.check_password(form.password.data):
             login_user(user)
             flash('Welcome back, %s.' % user.username)
-            next = request.args.get('next')
-            return redirect(next or url_for('users.control_panel'))
+            return redirect(request.args.get('next') or url_for('users.control_panel'))
         else:
             flash('Invalid username or password.', 'error')
     return render_template('login.html', form=form, title='Login')
@@ -83,7 +79,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Goodbye')
+    flash('Goodbye.')
     return redirect(url_for('public.index'))
 
 @users_blueprint.route('/register', methods=['GET', 'POST'])

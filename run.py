@@ -41,7 +41,7 @@ def clear_dirs(remove_directory):
 
 @main.command()
 def setup_dirs():
-    """Create required directories required to store files and etc."""
+    """Create required directories to store files."""
     app.config.from_object('config.Config')
     if not os.path.exists(app.config['UPLOAD_DIRECTORY']):
         os.mkdir(app.config['UPLOAD_DIRECTORY'])

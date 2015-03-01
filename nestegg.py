@@ -3,6 +3,7 @@ from flask_bcrypt import Bcrypt
 from flask_cache import Cache
 from flask_login import LoginManager
 from flask_assets import Environment, Bundle
+from flask_images import Images
 from flask import Flask, render_template
 
 # Flask
@@ -21,6 +22,9 @@ cache = Cache(app, config={'CACHE_TYPE': 'redis'})
 assets = Environment(app)
 css = Bundle('main.css', 'normalize.css', 'skeleton.css', filters='cssmin', output='min/default.css')
 assets.register('css_min', css)
+
+# Images
+images = Images(app)
 
 # Login Manager
 lm = LoginManager()

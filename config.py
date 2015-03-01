@@ -8,6 +8,7 @@ class Config(object):
     TESTING = False
     DEBUG = False
     UPLOAD_DIRECTORY = 'files'
+    IMAGES_PATH = [UPLOAD_DIRECTORY]
 
 class Development(Config):
     DEBUG = True

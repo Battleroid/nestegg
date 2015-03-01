@@ -59,6 +59,7 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     filename = db.Column(db.String(255), nullable=False, unique=True)
+    public = db.Column(db.Boolean, nullable=False, server_default='1')
     name = db.Column(db.String(100), nullable=False)
     desc = db.Column(db.Text(512), nullable=True)
 

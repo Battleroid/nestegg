@@ -4,11 +4,13 @@
     <form action="{{ url_for('users.edit_profile') }}" method="post">
         {{ form.hidden_tag() }}
         <div class="row">
+            <fieldset>
             <div class="well">
                 {% if current_user.about %}{{ current_user.about }}{% else %}You have not written any about section yet.{% endif %}
             </div>
             <label for="{{ form.about.name }}">{{ form.about.label }}</label>
             {{ form.about(class='u-full-width', **{'autofocus':''}) }}
+            </fieldset>
             <div class="well">{{ current_user.email }}</div>
             <label for="{{ form.email.name }}">{{ form.email.label }}</label>
             {{ form.email(class='u-full-width', placeholder=current_user.email) }}

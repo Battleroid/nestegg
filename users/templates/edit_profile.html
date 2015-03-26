@@ -17,16 +17,6 @@
             <label for="{{ form.about.name }}">{{ form.about.label }}</label>
             {{ form.about(class='u-full-width') }}
         </div>
-        <div class="row">
-            <label for="{{ form.email.name }}">{{ form.email.label }}</label>
-            {{ form.email(class='u-full-width') }}
-            <p class="help"><strong>Note:</strong> Changing your email address will require email confirmation.</p>
-        </div>
-        <div class="row">
-            <label for="{{ form.password.name }}">{{ form.password.label }}</label>
-            {{ form.password(class='u-full-width', **{'required':''}) }}
-            <p class="help"><strong>Note:</strong> Your password is required to make any changes.</p>
-        </div>
         {{ form.submit(class='button-primary') }}
     </form>
 {% endblock %}

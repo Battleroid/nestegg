@@ -7,6 +7,7 @@ from wtforms import StringField, PasswordField, SubmitField, TextAreaField, Bool
 class LoginForm(Form):
     username = StringField('Username', [DataRequired()])
     password = PasswordField('Password', [DataRequired()])
+    remember = BooleanField('Remember Me?', [Optional()])
     submit = SubmitField('Login')
 
 class RegisterForm(Form):
@@ -15,7 +16,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm Password', [DataRequired(), EqualTo('password', 'Passwords must match.')])
     email = StringField('Email Address', [DataRequired(), Email(message='Not a valid email.')])
     agree_to_tos = BooleanField('I agree to the Terms of Service', [InputRequired()])
-    recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()
     submit = SubmitField('Sign Up')
 
 class UploadForm(Form):
@@ -28,6 +29,4 @@ class EditProfile(Form):
     first_name = StringField('First name', [Optional(), Length(max=50)])
     last_name = StringField('Last name', [Optional(), Length(max=50)])
     about = TextAreaField('About Me', [Optional(), Length(max=512)])
-    email = EmailField('Email', [Optional(), Email(message='Not a valid email.')])
-    password = PasswordField('Password', [DataRequired()])
     submit = SubmitField('Save Changes')

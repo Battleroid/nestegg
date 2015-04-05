@@ -90,3 +90,11 @@ div.panel h4 {
 .cp {
 	margin-bottom: 1em;
 }
+
+ul.gallery-cp li{
+	display:inline-block;
+	float:left;
+	background:#eee;
+	padding: 5px;
+	margin-right: 5px;
+}

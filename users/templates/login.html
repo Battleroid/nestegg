@@ -9,6 +9,8 @@
                 {{ form.username(class='u-full-width', **{'required':'', 'autofocus':''}) }}
                 <label for="{{ form.password.name }}">{{ form.password.label }}</label>
                 {{ form.password(class='u-full-width', **{'required':''}) }}
+                <label for="{{ form.remember.name }}">{{ form.remember.label }}</label>
+                {{ form.remember }}
             </div>
         </div>
         {{ form.submit(class='button-primary') }}

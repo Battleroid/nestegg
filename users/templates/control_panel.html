@@ -26,9 +26,14 @@
             {% if current_user.files.count() == 0 %}
                 <p>You haven't uploaded anything yet!</p>
             {% else %}
-                {% for file in current_user.files %}
-                    {{ file.name }}, {{ file.desc }}
+            <ul class="gallery-cp">
+                {% for image in current_user.files %}
+                    <li>
+                        <img src="{{ resized_img_src(image.filename, width=150, height=150, mode='fit', quality=85) }}" alt="{{ image.name }}"/>
+                        <p>{{ image.name | truncate(16, True) }}</p>
+                    </li>
                 {% endfor %}
+            </ul>
             {% endif %}
         </div>
     </div>

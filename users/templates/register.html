@@ -7,21 +7,16 @@
             <div class="one-half column">
                 <label for="{{ form.username.name }}">{{ form.username.label }}</label>
                 {{ form.username(class='u-full-width', **{'required':'', 'autofocus':''}) }}
-
                 <label for="{{ form.password.name }}">{{ form.password.label }}</label>
                 {{ form.password(class='u-full-width', **{'required':''}) }}
-
                 <label for="{{ form.confirm.name }}">{{ form.confirm.label }}</label>
                 {{ form.confirm(class='u-full-width', **{'required':''}) }}
-
                 <label for="{{ form.email.name }}">{{ form.email.label }}</label>
                 {{ form.email(class='u-full-width', **{'required':'', 'type':'email'}) }}
-
                 <label>
                     {{ form.agree_to_tos(**{'required':''}) }}
                     <span class="label-body">{{ form.agree_to_tos.label }}</span>
                 </label>
-
 {#                {{ form.recaptcha(class='u-full-width recaptcha') }}#}
             </div>
         </div>

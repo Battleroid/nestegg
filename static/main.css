@@ -8,7 +8,7 @@ header {
     margin-top: 1em;
 }
 
-h4 small.edit a {
+small.edit a {
     font-size: 0.7em;
     font-weight: 500;
 }
@@ -144,32 +144,80 @@ ul.gallery {
 
 ul.gallery li {
     display: inline-block;
+    position: relative;
+    margin: 0 4.167% 30px 0;
+    vertical-align: top;
+
+}
+
+ul.gallery li:nth-child(4) {
+    margin-right: 0;
+}
+
+ul.gallery li img {
+    display: inline-block;
+    transition-property: opacity;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+}
+
+ul.gallery li a.photo {
+    background: #8c8c8c;
+    display: block;
+    min-height: 150px;
+    min-width: 150px;
+}
+
+ul.gallery li .controls {
+    display: none;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    /*padding-right: 5px;*/
+    height: 150px;
+    width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+ul.gallery li:hover img {
+    opacity: 0.5;
+}
+
+ul.gallery li:hover .controls {
+    display: block;
+}
+
+ul.gallery .controls a {
+    display: block;
+    text-decoration: none;
 }
 
 ul.gallery a.remove {
-    display: none;
-    position: absolute;
-    top: 5px;
-    left: 7px;
+    /*display: none;*/
+    /*position: absolute;*/
+    /*top: 5px;*/
+    /*left: 7px;*/
     padding: 0;
     margin: 0;
     color: #b43a1f;
 }
 
 ul.gallery a.edit {
-    display: none;
-    position: absolute;
-    top: 5px;
-    left: 25px;
+    /*display: none;*/
+    /*position: absolute;*/
+    /*top: 5px;*/
+    /*left: 25px;*/
     padding: 0;
     margin: 0;
     color: #3576ff;
 }
 
-ul.gallery li:hover a.remove {
-    display: block;
-}
+/*ul.gallery li:hover a.remove {*/
+    /*display: block;*/
+/*}*/
 
-ul.gallery li:hover a.edit {
-    display: block;
-}
+/*ul.gallery li:hover a.edit {*/
+    /*display: block;*/
+/*}*/

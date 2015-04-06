@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h3>{{ user.username | capitalize }}'s Profile</h3>
+    <h3>{{ user.username | capitalize }}'s Profile
+    {% if current_user.is_authenticated() and current_user.id == user.id %}
+        <small class="edit"><a href="{{ url_for('users.edit_profile') }}">edit</a></small>
+    {% endif %}
+    </h3>
     {% if user.about %}
         {{ user.about }}
     {% else %}

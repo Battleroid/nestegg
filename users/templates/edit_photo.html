@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="post" action="{{ url_for('users.edit_photo', image_id=image_id) }}">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="one-half column">
+                <label for="{{ form.name.name }}">{{ form.name.label }}</label>
+                {{ form.name(class='u-full-width', **{'required':'', 'autofocus':''}) }}
+                <label for="{{ form.desc.name }}">{{ form.desc.label }}</label>
+                {{ form.desc(class='u-full-width') }}
+            </div>
+        </div>
+        {{ form.submit(class='button-primary') }}
+    </form>
+{% endblock %}

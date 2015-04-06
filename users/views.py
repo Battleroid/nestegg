@@ -2,7 +2,7 @@ import os
 from flask import render_template, Blueprint, request, flash, redirect, url_for
 from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
-from .forms import LoginForm, RegisterForm, UploadForm, EditProfile, PasswordForm
+from .forms import LoginForm, RegisterForm, UploadForm, EditProfile, PasswordForm, EditPhotoForm
 from models import User, File
 from nestegg import app, db
 from util import flash_errors, allowed_filename
@@ -10,10 +10,11 @@ import humanize
 
 users_blueprint = Blueprint(
     'users', __name__,
-    template_folder='templates'
+    template_folder='templates',
+    url_prefix='/user'
 )
 
-@users_blueprint.route('/profile/cp', methods=['GET', 'POST'])
+@users_blueprint.route('/control-panel', methods=['GET', 'POST'])
 @login_required
 def control_panel():
     '''Basic control panel where all user specific configuration options are made available.'''
@@ -31,8 +32,8 @@ def view_photo(photo_id):
     owner = User.query.with_entities(User.username).filter(User.id == photo.user_id).first()
     return render_template('view_photo.html', title=photo.name, photo=photo, owner=owner)
 
-@users_blueprint.route('/profile/gallery/')
-@users_blueprint.route('/profile/gallery/<int:page>')
+@users_blueprint.route('/gallery/')
+@users_blueprint.route('/gallery/<int:page>')
 @login_required
 def gallery(page=1):
     '''Paginated gallery. From here users can delete photos, possibly edit, make public, etc.'''
@@ -45,7 +46,7 @@ def pro():
     '''Allows user to manage their subscription. This includes removing their subscription (ending it immediately afaik, work with Stripe for delayed end?) and subscribing.'''
     pass
 
-@users_blueprint.route('/profile/upload', methods=['GET', 'POST'])
+@users_blueprint.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
     '''Upload file and attach title/description.'''
@@ -59,13 +60,14 @@ def upload_file():
             db.session.add(f)
             db.session.commit()
             flash('File %s uploaded!' % f.name, 'good')
+            return redirect(url_for('users.control_panel'))
         else:
             flash('File is not a valid type.', 'error')
     else:
         flash_errors(form)
     return render_template('upload.html', title='Upload File', form=form)
 
-@users_blueprint.route('/profile/edit', methods=['GET', 'POST'])
+@users_blueprint.route('/edit-profile/about', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     '''Edit basic information for user, including about, first/last name.'''
@@ -80,11 +82,11 @@ def edit_profile():
         flash_errors(form)
     return render_template('edit_profile.html', title='Edit Profile', form=form)
 
-@users_blueprint.route('/profile/security', methods=['GET', 'POST'])
+@users_blueprint.route('/edit-profile/security', methods=['GET', 'POST'])
 @login_required
 def edit_security():
     '''Change password for user.'''
-    form = PasswordForm(obj=current_user)
+    form = PasswordForm()
     if request.method == 'POST' and form.validate_on_submit():
         if current_user.check_password(form.current_password.data):
             current_user.password = form.password.data
@@ -96,7 +98,7 @@ def edit_security():
         flash_errors(form)
     return render_template('edit_security.html', title='Change Password', form=form)
 
-@users_blueprint.route('/view/profile/<username>')
+@users_blueprint.route('/view-profile/<username>')
 def view_profile(username):
     '''Present public profile of user.'''
     user = User.query.filter_by(username=username).first_or_404()
@@ -108,7 +110,7 @@ def login():
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and user.check_password(form.password.data):
-            login_user(user)
+            login_user(user, remember=form.remember.data)
             flash('Welcome back, %s.' % user.username)
             return redirect(request.args.get('next') or url_for('users.control_panel'))
         else:
@@ -144,7 +146,7 @@ def register():
         flash_errors(form)
     return render_template('register.html', form=form, title='Register')
 
-@users_blueprint.route('/remove/<int:image_id>', methods=['GET'])
+@users_blueprint.route('/remove-photo/<int:image_id>', methods=['GET'])
 @login_required
 def remove_photo(image_id):
     '''Remove photo ID if it exists and belongs to currently logged in user.'''
@@ -160,6 +162,25 @@ def remove_photo(image_id):
     flash('Photo removed.', 'good')
     # return redirect(url_for('user.gallery'))
     return redirect(url_for('users.control_panel'))
+
+@users_blueprint.route('/edit-photo/<int:image_id>', methods=['GET', 'POST'])
+@login_required
+def edit_photo(image_id):
+    if not image_id or not current_user.files.filter(File.id == image_id).first():
+        flash('That image does not exist.', 'error')
+        return redirect(url_for('users.control_panel'))
+    photo = File.query.get(image_id)
+    form = EditPhotoForm(obj=photo)
+    if request.method == 'POST' and form.validate_on_submit():
+        if current_user.pro_status and form.public.data:
+            photo.public = True
+        # elif not current_user.pro_status:
+        #     flash('Subscription is required to create private photos.', 'error')
+        photo.name = form.name.data if form.name.data else photo.name
+        photo.desc = form.desc.data if form.desc.data else photo.desc
+        db.session.commit()
+        flash('Changes saved!', 'good')
+    return render_template('edit_photo.html', title='Edit Photo', form=form, image_id=image_id)
 
 @users_blueprint.app_template_filter()
 def timesince(z):

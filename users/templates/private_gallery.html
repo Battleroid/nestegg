@@ -3,11 +3,13 @@
 {% block content %}
     {% if photos.items %}
         {% for item in photos.items %}
-            <ul>
+            <ul class="gallery">
                <li>
                    <a href="{{ url_for('users.view_photo', photo_id=item.id) }}">
                    <img src="{{ resized_img_src(item.filename, width=150, height=150, mode='fit', quality=85) }}" alt="{{ item.name }}"/>
                    </a>
+                   <a class="remove" href="{{ url_for('users.remove_photo', image_id=item.id) }}"><span class="fa fa-times"></span></a>
+                   <a class="edit" href="{{ url_for('users.edit_photo', image_id=item.id) }}"><span class="fa fa-pencil"></span></a>
                </li>
             </ul>
         {% endfor %}

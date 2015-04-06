@@ -31,6 +31,12 @@ class PasswordForm(Form):
     confirm = PasswordField('Confirm Password', [DataRequired(), EqualTo('password', 'Passwords must match.')])
     submit = SubmitField('Change Password')
 
+class EditPhotoForm(Form):
+    public = BooleanField('Public', [Optional()])
+    name = StringField('Name', [DataRequired(), Length(1, 255)])
+    desc = TextAreaField('Description (optional)', [Optional()])
+    submit = SubmitField('Save Changes')
+
 class EditProfile(Form):
     first_name = StringField('First name', [Optional(), Length(max=50)])
     last_name = StringField('Last name', [Optional(), Length(max=50)])

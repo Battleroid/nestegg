@@ -135,3 +135,41 @@ figure figcaption {
 	padding-right: 10px;
 	padding-left: 10px;
 }
+
+ul.gallery {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+ul.gallery li {
+    display: inline-block;
+}
+
+ul.gallery a.remove {
+    display: none;
+    position: absolute;
+    top: 5px;
+    left: 7px;
+    padding: 0;
+    margin: 0;
+    color: #b43a1f;
+}
+
+ul.gallery a.edit {
+    display: none;
+    position: absolute;
+    top: 5px;
+    left: 25px;
+    padding: 0;
+    margin: 0;
+    color: #3576ff;
+}
+
+ul.gallery li:hover a.remove {
+    display: block;
+}
+
+ul.gallery li:hover a.edit {
+    display: block;
+}

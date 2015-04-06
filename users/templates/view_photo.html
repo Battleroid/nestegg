@@ -5,6 +5,9 @@
         <img class="u-full-width" src="{{ url_for('static', filename=config.IMAGE_URL_PATH ~ '/' ~ photo.filename) }}" alt="{{ photo.name }}">
         <figcaption>
             <p><strong>{{ photo.name }}</strong> by <a href="{{ url_for('users.view_profile', username=owner.username) }}">{{ owner.username|title }}</a></p>
+            {% if current_user.is_authenticated() and current_user.id == photo.user_id %}
+                <a href="{{ url_for('users.remove_photo', image_id=photo.id)  }}">Delete</a> or <a href="{{ url_for('users.edit_photo', image_id=photo.id) }}">Edit</a>
+            {% endif %}
             {% if photo.desc %}<p>{{ photo.desc }}</p>{% endif %}
         </figcaption>
     </figure>

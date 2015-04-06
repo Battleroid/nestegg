@@ -43,8 +43,9 @@ def clear_dirs(remove_directory):
 def setup_dirs():
     """Create required directories to store files."""
     app.config.from_object('config.Config')
-    if not os.path.exists(app.config['UPLOAD_DIRECTORY']):
-        os.mkdir(app.config['UPLOAD_DIRECTORY'])
+    path = os.path.join(app.config['UPLOAD_DIRECTORY'])
+    if not os.path.exists(path):
+        os.mkdir(path)
 
 @main.command()
 @click.option('--yes', is_flag=True, expose_value=False, callback=abort_if_false, prompt='Are you sure you want to reset the database?', help='Do not prompt for reset.')

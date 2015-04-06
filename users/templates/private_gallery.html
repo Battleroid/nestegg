@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if photos.items %}
+        {% for item in photos.items %}
+            <ul>
+               <li>
+                   <a href="{{ url_for('users.view_photo', photo_id=item.id) }}">
+                   <img src="{{ resized_img_src(item.filename, width=150, height=150, mode='fit', quality=85) }}" alt="{{ item.name }}"/>
+                   </a>
+               </li>
+            </ul>
+        {% endfor %}
+    {% else %}
+        <p>You haven't uploaded anything yet!</p>
+    {% endif %}
+{% endblock %}

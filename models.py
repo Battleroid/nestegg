@@ -7,17 +7,17 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    _pw = db.Column('password', db.String(255), nullable=True)
+    _pw = db.Column('password', db.String(255), nullable=True)  # hybrid property used for bcrypt
     email = db.Column(db.String(255), nullable=False, unique=True)
-    confirmed = db.Column(db.Boolean, server_default='0')
+    confirmed = db.Column(db.Boolean, server_default='0')  # whether or not email confirmation for registration is complete
     first_name = db.Column(db.String(50), nullable=True, server_default='')
     last_name = db.Column(db.String(50), nullable=True, server_default='')
     about = db.Column(db.Text(1000), default='Nothing yet!')
     registered_at = db.Column(db.DateTime, default=datetime.datetime.now())
-    stripe_token = db.Column(db.String(255), nullable=True, unique=True)
-    pro_status = db.Column(db.Boolean, server_default='0')
-    pro_expiration = db.Column(db.DateTime, nullable=True)
-    files = db.relationship('File', backref='user', lazy='dynamic')
+    stripe_token = db.Column(db.String(255), nullable=True, unique=True)  # null until first payment
+    pro_status = db.Column(db.Boolean, server_default='0')  # false until subscription, or return to false on sub end
+    pro_expiration = db.Column(db.DateTime, nullable=True)  # purely for use by the user, null at first, only serves purpose to show when sub ends or ended
+    files = db.relationship('File', backref='user', lazy='dynamic')  # collection of files for the user
 
     def __init__(self, username, password, email):
         self.username = username

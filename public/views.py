@@ -8,17 +8,17 @@ public_blueprint = Blueprint(
 
 @public_blueprint.route('/tos')
 def tos():
-    pass
+    return 'tos'
 
 @public_blueprint.route('/privacy')
 def privacy():
-    pass
+    return 'privacy policy'
 
 @public_blueprint.route('/about')
 def about():
-    pass
+    return 'about'
 
 @public_blueprint.route('/')
 def index():
-    gallery = File.query.limit(10).all()
+    gallery = File.query.limit(5).all()
     return render_template('index.html', title='Home', gallery=gallery)

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <figure>
+        <img class="u-full-width" src="{{ url_for('static', filename=config.IMAGE_URL_PATH ~ '/' ~ photo.filename) }}" alt="{{ photo.name }}">
+        <figcaption>
+            <p><strong>{{ photo.name }}</strong> by <a href="{{ url_for('users.view_profile', username=owner.username) }}">{{ owner.username|title }}</a></p>
+            {% if photo.desc %}<p>{{ photo.desc }}</p>{% endif %}
+        </figcaption>
+    </figure>
+{% endblock %}

@@ -16,7 +16,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm Password', [DataRequired(), EqualTo('password', 'Passwords must match.')])
     email = StringField('Email Address', [DataRequired(), Email(message='Not a valid email.')])
     agree_to_tos = BooleanField('I agree to the Terms of Service', [InputRequired()])
-    # recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()  # disable temporarily while in development
     submit = SubmitField('Sign Up')
 
 class UploadForm(Form):
@@ -24,6 +24,12 @@ class UploadForm(Form):
     title = StringField('Title', [DataRequired(), Length(1, 255)])
     desc = TextAreaField('Description (optional)', [Optional()])
     submit = SubmitField('Upload')
+
+class PasswordForm(Form):
+    current_password = PasswordField('Current Password', [DataRequired(), Length(8, 255)])
+    password = PasswordField('Password', [DataRequired(), Length(8, 255)])
+    confirm = PasswordField('Confirm Password', [DataRequired(), EqualTo('password', 'Passwords must match.')])
+    submit = SubmitField('Change Password')
 
 class EditProfile(Form):
     first_name = StringField('First name', [Optional(), Length(max=50)])

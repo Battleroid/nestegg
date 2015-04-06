@@ -2,9 +2,10 @@ import os
 from flask import render_template, Blueprint, request, flash, redirect, url_for
 from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
-from .forms import LoginForm, RegisterForm, UploadForm, EditProfile
+from .forms import LoginForm, RegisterForm, UploadForm, EditProfile, PasswordForm
 from models import User, File
 from nestegg import app, db
+from util import flash_errors, allowed_filename
 import humanize
 
 users_blueprint = Blueprint(
@@ -18,12 +19,25 @@ def control_panel():
     '''Basic control panel where all user specific configuration options are made available.'''
     return render_template('control_panel.html', title='Control Panel')
 
+@users_blueprint.route('/photo/<int:photo_id>')
+def view_photo(photo_id):
+    photo = File.query.filter(File.id == photo_id).first()
+    if not photo_id or not photo:
+        flash('Photo does not exist!', 'error')
+        if current_user:
+            return redirect(url_for('users.control_panel'))
+        else:
+            return redirect(url_for('public.index'))
+    owner = User.query.with_entities(User.username).filter(User.id == photo.user_id).first()
+    return render_template('view_photo.html', title=photo.name, photo=photo, owner=owner)
+
 @users_blueprint.route('/profile/gallery/')
 @users_blueprint.route('/profile/gallery/<int:page>')
 @login_required
 def gallery(page=1):
-    '''Paginated gallery (app.config param for max images per page). From here users can delete photos, possibly edit, make public, etc.'''
-    pass
+    '''Paginated gallery. From here users can delete photos, possibly edit, make public, etc.'''
+    photos = current_user.files.with_entities(File.id, File.name, File.filename).paginate(page, 16, False)
+    return render_template('private_gallery.html', title='Your Images', photos=photos)
 
 @users_blueprint.route('/profile/pro', methods=['GET', 'POST'])
 @login_required
@@ -37,13 +51,18 @@ def upload_file():
     '''Upload file and attach title/description.'''
     form = UploadForm()
     if request.method == 'POST' and form.validate_on_submit():
-        # f_size = len(form.photo.data.stream.read()) for file size  # implement at later date, for now we'll just deal with it
-        f = File(form.title.data, form.desc.data, form.photo.data.filename.rsplit('.')[-1])  # incorrect .rsplit, fix
-        form.photo.data.save(os.path.join(app.config['UPLOAD_DIRECTORY'], f.filename))
-        current_user.files.append(f)
-        db.session.add(f)
-        db.session.commit()
-        flash('File %s uploaded!' % f.name)
+        if allowed_filename(form.photo.data.filename):
+            # f_size = len(form.photo.data.stream.read()) for file size  # implement at later date, for now we'll just deal with it
+            f = File(form.title.data, form.desc.data, form.photo.data.filename.rsplit('.')[-1])  # incorrect .rsplit, fix
+            form.photo.data.save(os.path.join(app.config['UPLOAD_DIRECTORY'], f.filename))
+            current_user.files.append(f)
+            db.session.add(f)
+            db.session.commit()
+            flash('File %s uploaded!' % f.name, 'good')
+        else:
+            flash('File is not a valid type.', 'error')
+    else:
+        flash_errors(form)
     return render_template('upload.html', title='Upload File', form=form)
 
 @users_blueprint.route('/profile/edit', methods=['GET', 'POST'])
@@ -56,8 +75,26 @@ def edit_profile():
         current_user.last_name = form.last_name.data if form.last_name.data else current_user.last_name
         current_user.about = form.about.data if form.about.data else current_user.about
         db.session.commit()
-        flash('Changes saved.')
+        flash('Changes saved.', 'good')
+    else:
+        flash_errors(form)
     return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+@users_blueprint.route('/profile/security', methods=['GET', 'POST'])
+@login_required
+def edit_security():
+    '''Change password for user.'''
+    form = PasswordForm(obj=current_user)
+    if request.method == 'POST' and form.validate_on_submit():
+        if current_user.check_password(form.current_password.data):
+            current_user.password = form.password.data
+            db.session.commit()
+            flash('Changes saved.', 'good')
+        else:
+            flash('Current password is incorrect.', 'error')
+    else:
+        flash_errors(form)
+    return render_template('edit_security.html', title='Change Password', form=form)
 
 @users_blueprint.route('/view/profile/<username>')
 def view_profile(username):
@@ -76,6 +113,8 @@ def login():
             return redirect(request.args.get('next') or url_for('users.control_panel'))
         else:
             flash('Invalid username or password.', 'error')
+    else:
+        flash_errors(form)
     return render_template('login.html', form=form, title='Login')
 
 @users_blueprint.route('/logout')
@@ -102,14 +141,15 @@ def register():
         except exc.SQLAlchemyError:
             flash('Username or email in use.', 'error')
     else:
-        flash('Errors in form', 'error')
+        flash_errors(form)
     return render_template('register.html', form=form, title='Register')
 
 @users_blueprint.route('/remove/<int:image_id>', methods=['GET'])
+@login_required
 def remove_photo(image_id):
     '''Remove photo ID if it exists and belongs to currently logged in user.'''
     if not image_id or not current_user.files.filter(File.id == image_id).first():
-        flash('That image does not exist.')
+        flash('That image does not exist.', 'error')
         return redirect(url_for('users.control_panel'))  # for now redirect to CP, as gallery is not functional yet
     photo = File.query.get(image_id)
     photo_path = os.path.join(app.config['UPLOAD_DIRECTORY'], photo.filename)
@@ -117,7 +157,7 @@ def remove_photo(image_id):
         os.remove(photo_path)
     db.session.delete(photo)
     db.session.commit()
-    flash('Photo removed.')
+    flash('Photo removed.', 'good')
     # return redirect(url_for('user.gallery'))
     return redirect(url_for('users.control_panel'))
 

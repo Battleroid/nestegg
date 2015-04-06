@@ -5,11 +5,11 @@
         {{ form.hidden_tag() }}
         <div class="row">
             <div class="one-half column">
-                <label for="{{ form.first_name.anem }}">{{ form.first_name.label }}</label>
+                <label for="{{ form.first_name.name }}">{{ form.first_name.label }}</label>
                 {{ form.first_name(class='u-full-width', **{'autofocus':''}) }}
             </div>
             <div class="one-half column">
-                <label for="{{ form.last_name.anem }}">{{ form.last_name.label }}</label>
+                <label for="{{ form.last_name.name }}">{{ form.last_name.label }}</label>
                 {{ form.last_name(class='u-full-width') }}
             </div>
         </div>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="post" action="{{ url_for('users.edit_security') }}">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <label for="{{ form.current_password.name }}">{{ form.current_password.label }}</label>
+            {{ form.current_password(class='u-full-width', **{'required':''}) }}
+        </div>
+        <div class="row">
+            <label for="{{ form.password.name }}">{{ form.password.label }}</label>
+            {{ form.password(class='u-full-width', **{'required':''}) }}
+        </div>
+        <div class="row">
+            <label for="{{ form.confirm.name }}">{{ form.confirm.label }}</label>
+            {{ form.confirm(class='u-full-width', **{'required':''}) }}
+        </div>
+        {{ form.submit(class='button-primary') }}
+    </form>
+{% endblock %}

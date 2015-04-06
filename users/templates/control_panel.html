@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row cp">
         <div class="panel">
-            <h4>About You <small class="edit"><a href="{{ url_for('users.edit_profile') }}">edit</a></small></h4>
+            <h4>About You <small class="edit"><a href="{{ url_for('users.edit_profile') }}">edit</a></small>, <small class="edit"><a href="{{ url_for('users.edit_security') }}">change password</a></small></h4>
             <div class="row">
                 You registered your account {{ current_user.registered_at | timesince }}.
             </div>
@@ -26,14 +26,15 @@
             {% if current_user.files.count() == 0 %}
                 <p>You haven't uploaded anything yet!</p>
             {% else %}
-            <ul class="gallery-cp">
-                {% for image in current_user.files %}
-                    <li>
-                        <img src="{{ resized_img_src(image.filename, width=150, height=150, mode='fit', quality=85) }}" alt="{{ image.name }}"/>
-                        <p>{{ image.name | truncate(16, True) }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
+                <ul class="gallery-cp">
+                    {% for image in current_user.files %}
+                        <li>
+                            <a href="{{ url_for('users.view_photo', photo_id=image.id) }}">
+                            <img src="{{ resized_img_src(image.filename, width=150, height=150, mode='fit', quality=85) }}" alt="{{ image.name }}"/>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
             {% endif %}
         </div>
     </div>

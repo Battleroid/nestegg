@@ -98,3 +98,40 @@ ul.gallery-cp li{
 	padding: 5px;
 	margin-right: 5px;
 }
+
+ul.flashes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+li.flash {
+    border-radius: 5px;
+    padding: 10px;
+    font-weight: bold;
+    border: 3px solid #000;
+}
+
+li.flash.error {
+    color: #b43a1f;
+    border-color: #b43a1f;
+}
+
+li.flash.good {
+    color: #8ec824;
+    border-color: #8ec824;
+}
+
+figure {
+    width: 100%;
+	margin: 0 !important;
+	padding-bottom: 5px;
+	border-radius: 3px;
+    background: #eee;
+}
+
+figure figcaption {
+	font-size: 85%;
+	padding-right: 10px;
+	padding-left: 10px;
+}

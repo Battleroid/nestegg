@@ -1,18 +1,65 @@
 import os
-from flask import render_template, Blueprint, request, flash, redirect, url_for
+import datetime
+import humanize
+import stripe
+from key import STRIPE_API_KEY
+from flask import render_template, Blueprint, request, flash, redirect, url_for, Response
 from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
 from .forms import LoginForm, RegisterForm, UploadForm, EditProfile, PasswordForm, EditPhotoForm
 from models import User, File
 from nestegg import app, db
 from util import flash_errors, allowed_filename
-import humanize
 
 users_blueprint = Blueprint(
     'users', __name__,
     template_folder='templates',
     url_prefix='/user'
 )
+
+stripe.api_key = STRIPE_API_KEY
+
+def update_sub(stripe_customer_id, end_date):
+    '''Update subscription for user (such as moving end date for subscription).'''
+    user = User.query.filter_by(stripe_token=stripe_customer_id)
+    timestamp = datetime.datetime.fromtimestamp(end_date)
+    print user
+    if not user:
+        return
+    user.pro_expiration = timestamp
+    user.pro_status = True
+    db.session.commit()
+
+def cancel_sub(stripe_customer_id, end_date):
+    '''Cancel subscription for user, move end date.'''
+    user = User.query.filter_by(stripe_token=stripe_customer_id)
+    timestamp = datetime.datetime.fromtimestamp(end_date)
+    print user
+    if not user:
+        return
+    user.pro_expiration = timestamp
+    user.pro_status = False
+    db.session.commit()
+
+@users_blueprint.route('/hook/', methods=['POST'])
+def hook():
+    '''Receive and process webhooks for subscription updates/deletions.'''
+    if not request.json or not request.json.get('id'):
+        return Response(status=406)
+    payload = request.json
+    event = stripe.Event.retrieve(payload.get('id'))
+    print event
+    if event.type == 'customer.subscription.deleted':
+        cancel_sub(event.data.object.customer, event.data.object.ended_at)
+    elif event.type == 'customer.subscription.updated':
+        update_sub(event.data.object.customer, event.current_period_end)
+    return Response(status=200)
+
+@users_blueprint.route('/profile/pro', methods=['GET', 'POST'])
+@login_required
+def pro():
+    '''Allows user to manage their subscription. This includes removing their subscription (ending it immediately afaik, work with Stripe for delayed end?) and subscribing.'''
+    render_template('pro.html', title='Pro Information')
 
 @users_blueprint.route('/control-panel', methods=['GET', 'POST'])
 @login_required
@@ -39,12 +86,6 @@ def gallery(page=1):
     '''Paginated gallery. From here users can delete photos, possibly edit, make public, etc.'''
     photos = current_user.files.with_entities(File.id, File.name, File.filename).paginate(page, 16, False)
     return render_template('private_gallery.html', title='Your Images', photos=photos)
-
-@users_blueprint.route('/profile/pro', methods=['GET', 'POST'])
-@login_required
-def pro():
-    '''Allows user to manage their subscription. This includes removing their subscription (ending it immediately afaik, work with Stripe for delayed end?) and subscribing.'''
-    pass
 
 @users_blueprint.route('/upload', methods=['GET', 'POST'])
 @login_required

@@ -9,7 +9,7 @@
                        <img src="{{ resized_img_src(item.filename, width=150, height=150, mode='fit', quality=85) }}" alt="{{ item.name }}"/>
                    </a>
                    <div class="controls">
-                       <strong>{{ item.name }}</strong>
+                       <a href="{{ url_for('users.view_photo', photo_id=item.id) }}">{{ item.name }}</a>
                        <a class="remove" href="{{ url_for('users.remove_photo', image_id=item.id) }}"><span class="fa fa-times"></span> Delete</a>
                        <a class="edit" href="{{ url_for('users.edit_photo', image_id=item.id) }}"><span class="fa fa-pencil"></span> Edit</a>
                    </div>

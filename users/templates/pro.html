@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if current_user.pro_status %}
+        {{ current_user.pro_expiration|datetimeformat }}
+    {% else %}
+        <p>You don't have a subscription, purchase one for $30/yr.</p>
+        <form action="{{ url_for('users.pro') }}" method="POST">
+          <script
+            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+            data-key="pk_test_bng7qbcluttj014Pdk46DDN9"
+            data-amount="3000"
+            data-name="Nestegg"
+            data-panel-lablel="Subscribe"
+            data-label="Subscribe"
+            data-description="Pro subscription ($30 per year)"
+            data-allow-remember-me="false"
+            data-bitcoin="true"
+            data-image="/128x128.png">
+          </script>
+        </form>
+    {% endif %}
+{% endblock %}

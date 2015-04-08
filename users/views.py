@@ -6,7 +6,7 @@ from key import STRIPE_API_KEY
 from flask import render_template, Blueprint, request, flash, redirect, url_for, Response
 from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
-from .forms import LoginForm, RegisterForm, UploadForm, EditProfile, PasswordForm, EditPhotoForm
+from users.forms import LoginForm, RegisterForm, UploadForm, EditProfile, PasswordForm, EditPhotoForm
 from models import User, File
 from nestegg import app, db
 from util import flash_errors, allowed_filename
@@ -21,7 +21,7 @@ stripe.api_key = STRIPE_API_KEY
 
 def update_sub(stripe_customer_id, end_date):
     '''Update subscription for user (such as moving end date for subscription).'''
-    user = User.query.filter_by(stripe_token=stripe_customer_id)
+    user = User.query.filter_by(stripe_token=stripe_customer_id).first()
     timestamp = datetime.datetime.fromtimestamp(end_date)
     print user
     if not user:
@@ -32,7 +32,7 @@ def update_sub(stripe_customer_id, end_date):
 
 def cancel_sub(stripe_customer_id, end_date):
     '''Cancel subscription for user, move end date.'''
-    user = User.query.filter_by(stripe_token=stripe_customer_id)
+    user = User.query.filter_by(stripe_token=stripe_customer_id).first()
     timestamp = datetime.datetime.fromtimestamp(end_date)
     print user
     if not user:
@@ -55,11 +55,28 @@ def hook():
         update_sub(event.data.object.customer, event.current_period_end)
     return Response(status=200)
 
-@users_blueprint.route('/profile/pro', methods=['GET', 'POST'])
+@users_blueprint.route('/pro-delete', methods=['POST'])
+@login_required
+def pro_delete():
+    pass
+
+@users_blueprint.route('/pro', methods=['GET', 'POST'])
 @login_required
 def pro():
     '''Allows user to manage their subscription. This includes removing their subscription (ending it immediately afaik, work with Stripe for delayed end?) and subscribing.'''
-    render_template('pro.html', title='Pro Information')
+    if request.method == 'POST':
+        cus_token = request.form['stripeToken']
+        cus_email = request.form['stripeEmail']
+        cus = stripe.Customer.create(
+            source=cus_token,
+            plan="pro",
+            email=cus_email
+        )
+        current_user.stripe_token = cus.id
+        current_user.pro_status = True
+        current_user.pro_expiration = datetime.datetime.fromtimestamp(cus.subscriptions.data[0].current_period_end)
+        db.session.commit()
+    return render_template('pro.html', title='Pro Information')
 
 @users_blueprint.route('/control-panel', methods=['GET', 'POST'])
 @login_required
@@ -85,7 +102,7 @@ def view_photo(photo_id):
 def gallery(page=1):
     '''Paginated gallery. From here users can delete photos, possibly edit, make public, etc.'''
     photos = current_user.files.with_entities(File.id, File.name, File.filename).paginate(page, 16, False)
-    return render_template('private_gallery.html', title='Your Images', photos=photos)
+    return render_template('gallery.html', title='Your Photos', photos=photos)
 
 @users_blueprint.route('/upload', methods=['GET', 'POST'])
 @login_required
@@ -201,8 +218,10 @@ def remove_photo(image_id):
     db.session.delete(photo)
     db.session.commit()
     flash('Photo removed.', 'good')
-    # return redirect(url_for('user.gallery'))
-    return redirect(url_for('users.control_panel'))
+    if current_user.files.count() > 0:
+        return redirect(url_for('users.gallery'))
+    else:
+        return redirect(url_for('users.control_panel'))
 
 @users_blueprint.route('/edit-photo/<int:image_id>', methods=['GET', 'POST'])
 @login_required
@@ -215,8 +234,6 @@ def edit_photo(image_id):
     if request.method == 'POST' and form.validate_on_submit():
         if current_user.pro_status and form.public.data:
             photo.public = True
-        # elif not current_user.pro_status:
-        #     flash('Subscription is required to create private photos.', 'error')
         photo.name = form.name.data if form.name.data else photo.name
         photo.desc = form.desc.data if form.desc.data else photo.desc
         db.session.commit()
@@ -226,3 +243,7 @@ def edit_photo(image_id):
 @users_blueprint.app_template_filter()
 def timesince(z):
     return humanize.naturaltime(z)
+
+@users_blueprint.app_template_filter()
+def datetimeformat(z, format='%Y-%m-%d'):
+    return z.strftime(format)

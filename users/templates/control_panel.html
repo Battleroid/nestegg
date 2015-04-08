@@ -27,15 +27,6 @@
                 <p>You haven't uploaded anything yet!</p>
             {% else %}
                 <p>You have {{ current_user.files.count() }} photo(s). Awesome!</p>
-{#                <ul class="gallery">#}
-{#                    {% for image in current_user.files.limit(4) %}#}
-{#                        <li>#}
-{#                            <a href="{{ url_for('users.view_photo', photo_id=image.id) }}">#}
-{#                            <img src="{{ resized_img_src(image.filename, width=150, height=150, mode='fit', quality=85) }}" alt="{{ image.name }}"/>#}
-{#                            </a>#}
-{#                        </li>#}
-{#                    {% endfor %}#}
-{#                </ul>#}
             {% endif %}
         </div>
     </div>

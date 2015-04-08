@@ -4,7 +4,7 @@
     {% if current_user.pro_status %}
         {{ current_user.pro_expiration|datetimeformat }}
     {% else %}
-        <p>You don't have a subscription, purchase one for $30/yr.</p>
+        <p>You don't have a subscription, would you like to purchase one for only $30 a year?</p>
         <form action="{{ url_for('users.pro') }}" method="POST">
           <script
             src="https://checkout.stripe.com/checkout.js" class="stripe-button"

@@ -65,17 +65,20 @@ def pro_delete():
 def pro():
     '''Allows user to manage their subscription. This includes removing their subscription (ending it immediately afaik, work with Stripe for delayed end?) and subscribing.'''
     if request.method == 'POST':
-        cus_token = request.form['stripeToken']
-        cus_email = request.form['stripeEmail']
-        cus = stripe.Customer.create(
-            source=cus_token,
-            plan="pro",
-            email=cus_email
-        )
-        current_user.stripe_token = cus.id
-        current_user.pro_status = True
-        current_user.pro_expiration = datetime.datetime.fromtimestamp(cus.subscriptions.data[0].current_period_end)
-        db.session.commit()
+        try:
+            cus_token = request.form['stripeToken']
+            cus_email = request.form['stripeEmail']
+            cus = stripe.Customer.create(
+                source=cus_token,
+                plan="pro",
+                email=cus_email
+            )
+            current_user.stripe_token = cus.id
+            current_user.pro_status = True
+            current_user.pro_expiration = datetime.datetime.fromtimestamp(cus.subscriptions.data[0].current_period_end)
+            db.session.commit()
+        except stripe.CardError, e:
+            flash('Could not charge your card, please check the card details or contact your card issuer.', 'error')
     return render_template('pro.html', title='Pro Information')
 
 @users_blueprint.route('/control-panel', methods=['GET', 'POST'])

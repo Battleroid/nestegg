@@ -17,7 +17,7 @@ users_blueprint = Blueprint(
     url_prefix='/user'
 )
 
-stripe.api_key = STRIPE_API_KEY
+stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
 def update_sub(stripe_customer_id, end_date):
     '''Update subscription for user (such as moving end date for subscription).'''

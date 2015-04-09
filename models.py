@@ -1,12 +1,12 @@
 import datetime
 from uuid import uuid4
 from sqlalchemy.ext.hybrid import hybrid_property
-from nestegg import db, bc
+from flask_whooshalchemy import whoosh_index
+from nestegg import db, bc, app
 
 
 class User(db.Model):
     __tablename__ = 'users'
-    __searchable__ = ['username']
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     _pw = db.Column('password', db.String(255), nullable=True)  # hybrid property used for bcrypt
@@ -79,3 +79,5 @@ class File(db.Model):
         while File.query.filter_by(filename=name).first():
             name = uuid4().hex + "." + extension
         return name
+
+whoosh_index(app, File)

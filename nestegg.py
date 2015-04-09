@@ -1,10 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_cache import Cache
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_assets import Environment, Bundle
 from flask_images import Images
-from flask import Flask, render_template
+from flask import Flask, render_template, g
+from users.forms import Search
 
 # Flask
 app = Flask(__name__)
@@ -56,3 +57,9 @@ lm.login_view = 'users.login'
 @lm.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+# Plugin search for all users
+@app.before_request
+def before_request():
+    g.user = current_user
+    g.search_form = Search()

@@ -285,7 +285,7 @@ def search():
 @users_blueprint.route('/search_results/<query>')
 @users_blueprint.route('/search_results/<query>/<int:page>')
 def search_results(query, page=1):
-    search = File.query.whoosh_search(query).all()
+    search = File.query.whoosh_search(query)
     results = search.paginate(page, 12, False)
     return render_template('search.html', title='Results for %s' % query, query=query, photos=results)
 

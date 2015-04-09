@@ -42,3 +42,6 @@ class EditProfile(Form):
     last_name = StringField('Last name', [Optional(), Length(max=50)])
     about = TextAreaField('About Me', [Optional(), Length(max=512)])
     submit = SubmitField('Save Changes')
+
+class Search(Form):
+    search_term = StringField('Search', [DataRequired()])

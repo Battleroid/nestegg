@@ -3,8 +3,10 @@ from uuid import uuid4
 from sqlalchemy.ext.hybrid import hybrid_property
 from nestegg import db, bc
 
+
 class User(db.Model):
     __tablename__ = 'users'
+    __searchable__ = ['username']
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     _pw = db.Column('password', db.String(255), nullable=True)  # hybrid property used for bcrypt
@@ -56,6 +58,7 @@ class User(db.Model):
 
 class File(db.Model):
     __tablename__ = 'files'
+    __searchable__ = ['name', 'desc']
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     filename = db.Column(db.String(255), nullable=False, unique=True)

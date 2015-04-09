@@ -221,3 +221,13 @@ ul.gallery a.edit {
 /*ul.gallery li:hover a.edit {*/
     /*display: block;*/
 /*}*/
+
+.bg img {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-height: 100%;
+    min-width: 100%;
+    background-size: cover;
+    z-index: -999;
+}

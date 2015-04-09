@@ -1,12 +1,22 @@
 {% extends "base.html" %}
 
+{% block head %}
+    <script src="{{ url_for('static', filename='js/packery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pack.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     {% if not samples %}
         <h3>Welcome!</h3>
         <p>Join today and show off your creations to the world!</p>
     {% else %}
-        {% for file in samples %}
-            {{ file.name }}
-        {% endfor %}
+        <div id="thumbs">
+            {# TODO: Basic jQuery slider for 5 images #}
+            {% for file in samples %}
+            <div class="bg">
+                <img src="{{ resized_img_src(file.filename, width=960, height=480, mode='fit', quality=90) }}" alt="{{ file.name }}"/>
+            </div>
+            {% endfor %}
+        </div>
     {% endif %}
 {% endblock %}

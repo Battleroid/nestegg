@@ -21,5 +21,5 @@ def about():
 
 @public_blueprint.route('/')
 def index():
-    samples = File.query.order_by(func.random()).limit(5)
+    samples = File.query.with_entities(File.id, File.name, File.filename).filter(File.public == True).order_by(func.random()).limit(1)
     return render_template('index.html', title='Home', samples=samples)

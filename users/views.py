@@ -1,8 +1,8 @@
 import os, datetime, humanize, stripe, stripe_keys
-from flask import render_template, Blueprint, request, flash, redirect, url_for, Response
+from flask import render_template, Blueprint, request, flash, redirect, url_for, Response, g
 from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
-from users.forms import LoginForm, RegisterForm, UploadForm, EditProfile, PasswordForm, EditPhotoForm
+from users.forms import LoginForm, RegisterForm, UploadForm, EditProfile, PasswordForm, EditPhotoForm, Search
 from models import User, File
 from nestegg import app, db
 from util import flash_errors, allowed_filename
@@ -12,6 +12,12 @@ users_blueprint = Blueprint(
     template_folder='templates',
     url_prefix='/user'
 )
+
+# TODO: Fix g or current_user object to properly setup search form on all pages regardless if user is anon or not
+@users_blueprint.before_request
+def before_request():
+    g.user = current_user
+    g.user.search_form = Search()
 
 stripe.api_key = stripe_keys.secret
 
@@ -107,6 +113,7 @@ def view_photo(photo_id):
     owner = User.query.with_entities(User.username).filter(User.id == photo.user_id).first()
     return render_template('view_photo.html', title=photo.name, photo=photo, owner=owner)
 
+# TODO: Consolidate templates for public_gallery, gallery, and search_results, they all use a slight variation on the same
 @users_blueprint.route('/<username>/gallery')
 @users_blueprint.route('/<username>/gallery/<int:page>')
 def public_gallery(username, page=1):
@@ -129,6 +136,7 @@ def gallery(page=1):
     photos = current_user.files.with_entities(File.id, File.name, File.filename).paginate(page, 12, False)
     return render_template('gallery.html', title='Your Photos', photos=photos)
 
+# TODO: Implement Pro limit for number of files (i.e. cannot upload more than 20 without subscription)
 @users_blueprint.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -257,13 +265,28 @@ def edit_photo(image_id):
     photo = File.query.get(image_id)
     form = EditPhotoForm(obj=photo)
     if request.method == 'POST' and form.validate_on_submit():
-        if current_user.pro_status and form.public.data:
-            photo.public = True
+        if current_user.pro_status:
+            photo.public = form.public.data
         photo.name = form.name.data if form.name.data else photo.name
         photo.desc = form.desc.data if form.desc.data else photo.desc
         db.session.commit()
         flash('Changes saved!', 'good')
     return render_template('edit_photo.html', title='Edit Photo', form=form, image_id=image_id)
+
+# TODO: Double check if working after fixing g/current_user object
+@users_blueprint.route('/search', methods=['POST'])
+def search():
+    '''Need to setup for both anon/non-pro and pro search.'''
+    if not g.search_form.validate_on_submit():
+        return redirect(url_for('public.index'))
+    return redirect(url_for('users.search_results', query=g.search_form.search_term.data))
+
+@users_blueprint.route('/search_results/<query>')
+@users_blueprint.route('/search_results/<query>/<int:page>')
+def search_results(query, page=1):
+    search = File.query.whoosh_search(query).all()
+    results = search.paginate(page, 12, False)
+    return render_template('search.html', title='Results for %s' % query, query=query, photos=results)
 
 @users_blueprint.app_template_filter()
 def timesince(z):

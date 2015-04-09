@@ -1,8 +1,4 @@
-import os
-import datetime
-import humanize
-import stripe
-from key import STRIPE_API_KEY
+import os, datetime, humanize, stripe, stripe_keys
 from flask import render_template, Blueprint, request, flash, redirect, url_for, Response
 from flask_login import logout_user, login_required, login_user, current_user
 from sqlalchemy import exc
@@ -17,7 +13,7 @@ users_blueprint = Blueprint(
     url_prefix='/user'
 )
 
-stripe.api_key = app.config['STRIPE_SECRET_KEY']
+stripe.api_key = stripe_keys.secret
 
 def update_sub(stripe_customer_id, end_date):
     '''Update subscription for user (such as moving end date for subscription).'''
@@ -55,15 +51,27 @@ def hook():
         update_sub(event.data.object.customer, event.current_period_end)
     return Response(status=200)
 
-@users_blueprint.route('/pro-delete', methods=['POST'])
+@users_blueprint.route('/unsubscribe', methods=['GET'])
 @login_required
-def pro_delete():
-    pass
+def unsubscribe():
+    if not current_user.pro_status:
+        flash('You cannot unsubscribe unless you have a subscription.', 'error')
+        return redirect(url_for('users.control_panel'))
+    customer = stripe.Customer.retrieve(current_user.stripe_token)
+    customer.cancel_subscription()
+    current_user.pro_status = False
+    current_user.pro_expiration = datetime.datetime.now()
+    db.session.commit()
+    flash('You have been successfully unsubscribed.', 'good')
+    return redirect(url_for('users.control_panel'))
 
 @users_blueprint.route('/pro', methods=['GET', 'POST'])
 @login_required
 def pro():
     '''Allows user to manage their subscription. This includes removing their subscription (ending it immediately afaik, work with Stripe for delayed end?) and subscribing.'''
+    if request.method == 'POST' and current_user.pro_status:
+        flash('Cannot subscribe if already a subscriber.', 'error')
+        return redirect(url_for('users.control_panel'))
     if request.method == 'POST':
         try:
             cus_token = request.form['stripeToken']
@@ -79,7 +87,7 @@ def pro():
             db.session.commit()
         except stripe.CardError, e:
             flash('Could not charge your card, please check the card details or contact your card issuer.', 'error')
-    return render_template('pro.html', title='Pro Information')
+    return render_template('pro.html', title='Pro Information', public_key=stripe_keys.public)
 
 @users_blueprint.route('/control-panel', methods=['GET', 'POST'])
 @login_required

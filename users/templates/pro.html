@@ -2,13 +2,14 @@
 
 {% block content %}
     {% if current_user.pro_status %}
-        {{ current_user.pro_expiration|datetimeformat }}
+        <p>You are currently subscribed as a Pro member! Your subscription will renew on: {{ current_user.pro_expiration|datetimeformat }}.</p>
+        <p>If you would like to cancel your subscription, please <a href="{{ url_for('users.unsubscribe') }}">click here</a>.</p>
     {% else %}
         <p>You don't have a subscription, would you like to purchase one for only $30 a year?</p>
         <form action="{{ url_for('users.pro') }}" method="POST">
           <script
             src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-            data-key="{{ config.STRIPE_PUBLIC_KEY }}"
+            data-key="{{ public_key }}"
             data-amount="3000"
             data-name="Nestegg"
             data-panel-lablel="Subscribe"
@@ -16,7 +17,7 @@
             data-description="Pro subscription ($30 per year)"
             data-allow-remember-me="false"
             data-bitcoin="true"
-            data-image="/128x128.png">
+            data-image="{{ url_for('static', filename='nestegg_stripe.png') }}">
           </script>
         </form>
     {% endif %}

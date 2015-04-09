@@ -1,2 +1,0 @@
-STRIPE_SECRET_KEY = 'secret'
-STRIPE_PUBLIC_KEY = 'public'

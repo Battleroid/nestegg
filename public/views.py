@@ -1,4 +1,5 @@
 from flask import render_template, Blueprint
+from sqlalchemy import func
 from models import File
 
 public_blueprint = Blueprint(
@@ -20,5 +21,5 @@ def about():
 
 @public_blueprint.route('/')
 def index():
-    gallery = File.query.limit(5).all()
-    return render_template('index.html', title='Home', gallery=gallery)
+    samples = File.query.order_by(func.random()).limit(5)
+    return render_template('index.html', title='Home', samples=samples)

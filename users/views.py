@@ -107,12 +107,26 @@ def view_photo(photo_id):
     owner = User.query.with_entities(User.username).filter(User.id == photo.user_id).first()
     return render_template('view_photo.html', title=photo.name, photo=photo, owner=owner)
 
+@users_blueprint.route('/<username>/gallery')
+@users_blueprint.route('/<username>/gallery/<int:page>')
+def public_gallery(username, page=1):
+    '''Paginated public gallery of user.'''
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return redirect(url_for('public.index'))
+    if current_user.is_anonymous():
+        query = user.files.filter(File.public == True).with_entities(File.id, File.name, File.filename)
+    else:
+        query = user.files.with_entities(File.id, File.name, File.filename)
+    photos = query.paginate(page, 12, False)
+    return render_template('public_gallery.html', title='%s\'s Photos' % user.username.capitalize(), user=user.username, photos=photos)
+
 @users_blueprint.route('/gallery/')
 @users_blueprint.route('/gallery/<int:page>')
 @login_required
 def gallery(page=1):
     '''Paginated gallery. From here users can delete photos, possibly edit, make public, etc.'''
-    photos = current_user.files.with_entities(File.id, File.name, File.filename).paginate(page, 16, False)
+    photos = current_user.files.with_entities(File.id, File.name, File.filename).paginate(page, 12, False)
     return render_template('gallery.html', title='Your Photos', photos=photos)
 
 @users_blueprint.route('/upload', methods=['GET', 'POST'])

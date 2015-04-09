@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if photos.items %}
+        <ul class="gallery">
+        {% for item in photos.items %}
+            <li>
+                <a class="photo" href="{{ url_for('users.view_photo', photo_id=item.id) }}">
+                    <img src="{{ resized_img_src(item.filename, width=150, height=150, mode='fit', quality=85) }}" alt="{{ item.name }}"/>
+                </a>
+                <div class="controls">
+                    <a href="{{ url_for('users.view_photo', photo_id=item.id) }}">{{ item.name }}</a>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+        <div class="pagination-controls">
+            {% if photos.has_prev %}
+                <a href="{{ url_for('users.public_gallery', username=user, page=photos.prev_num) }}">Previous</a>
+            {% endif %}
+            {% if photos.has_next %}
+                <a href="{{ url_for('users.public_gallery', username=user, page=photos.next_num) }}">Next</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>{{ user }} doesn't have any photos!</p>
+    {% endif %}
+{% endblock %}

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% if not gallery %}
+    {% if not samples %}
         <h3>Welcome!</h3>
         <p>Join today and show off your creations to the world!</p>
     {% else %}
-        {% for file in gallery %}
+        {% for file in samples %}
             {{ file.name }}
         {% endfor %}
     {% endif %}

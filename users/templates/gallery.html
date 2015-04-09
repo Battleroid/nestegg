@@ -16,6 +16,14 @@
                </li>
         {% endfor %}
         </ul>
+        <div class="pagination-controls">
+            {% if photos.has_prev %}
+                <a href="{{ url_for('users.gallery', page=photos.prev_num) }}">Previous</a>
+            {% endif %}
+            {% if photos.has_next %}
+                <a href="{{ url_for('users.gallery', page=photos.next_num) }}">Next</a>
+            {% endif %}
+        </div>
     {% else %}
         <p>You haven't uploaded anything yet!</p>
     {% endif %}

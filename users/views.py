@@ -114,7 +114,7 @@ def public_gallery(username, page=1):
     user = User.query.filter_by(username=username).first()
     if not user:
         return redirect(url_for('public.index'))
-    if current_user.is_anonymous():
+    if current_user.is_anonymous() or not current_user.pro_status:
         query = user.files.filter(File.public == True).with_entities(File.id, File.name, File.filename)
     else:
         query = user.files.with_entities(File.id, File.name, File.filename)

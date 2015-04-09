@@ -14,6 +14,7 @@ users_blueprint = Blueprint(
 )
 
 # TODO: Fix g or current_user object to properly setup search form on all pages regardless if user is anon or not
+# TODO: Note, g object is failing because its use is outside of the blueprint's scope, i.e. used in public instead of user
 @users_blueprint.before_request
 def before_request():
     g.user = current_user

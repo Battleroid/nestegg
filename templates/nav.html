@@ -17,7 +17,7 @@
                 <li><a href="{{ url_for('users.register') }}">Register</a></li>
             {% endif %}
             {# TODO: Ascertain why search form is not working. #}
-            <form method="post" action="{{ url_for('users.search') }}">{{ g.search_form.hidden_tag() }}{{ g.search_form.search_term }} <input type="submit" value="Search"/></form>
+            <form method="post" action="{{ url_for('users.search') }}">{{ g.search_form.hidden_tag() }}{{ g.search_form.search_term }} <input class="button button-primary" type="submit" value="Search"/></form>
         </ul>
     </div>
 </nav>

@@ -63,3 +63,18 @@ def load_user(user_id):
 def before_request():
     g.user = current_user
     g.search_form = Search()
+
+def create_app():
+    from config import Testing
+    app = Flask(__name__)
+    app.config.from_object(Testing)
+    db = SQLAlchemy(app)
+    assets = Environment(app)
+    css = Bundle('main.css', 'normalize.css', 'skeleton.css', filters='cssmin', output='min/default.css')
+    assets.register('css_min', css)
+    images = Images(app)
+    lm = LoginManager()
+    lm.init_app(app)
+    app.register_blueprint(public_blueprint)
+    app.register_blueprint(users_blueprint)
+    return app

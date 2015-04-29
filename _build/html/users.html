@@ -1,0 +1,554 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>users blueprint &mdash; Nestegg 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Nestegg 1.0 documentation" href="index.html" />
+    <link rel="prev" title="public blueprint" href="public.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="http-routingtable.html" title="HTTP Routing Table"
+             >routing table</a> |</li>
+        <li class="right" >
+          <a href="public.html" title="public blueprint"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Nestegg 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="users-blueprint">
+<h1>users blueprint<a class="headerlink" href="#users-blueprint" title="Permalink to this headline">¶</a></h1>
+<dl class="get">
+<dt id="get--user-edit-profile-security">
+<code class="descname">GET </code><code class="descname">/user/edit-profile/security</code><a class="headerlink" href="#get--user-edit-profile-security" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit password for user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>current_password</strong> &#8211; current password for user</li>
+<li><strong>password</strong> &#8211; new password for user</li>
+<li><strong>confirm</strong> &#8211; new password confirmation</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-edit-profile-security">
+<code class="descname">POST </code><code class="descname">/user/edit-profile/security</code><a class="headerlink" href="#post--user-edit-profile-security" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit password for user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>current_password</strong> &#8211; current password for user</li>
+<li><strong>password</strong> &#8211; new password for user</li>
+<li><strong>confirm</strong> &#8211; new password confirmation</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-edit-profile-about">
+<code class="descname">GET </code><code class="descname">/user/edit-profile/about</code><a class="headerlink" href="#get--user-edit-profile-about" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit basic information for user profile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>first_name</strong> &#8211; first name of user</li>
+<li><strong>last_name</strong> &#8211; last name of user</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-edit-profile-about">
+<code class="descname">POST </code><code class="descname">/user/edit-profile/about</code><a class="headerlink" href="#post--user-edit-profile-about" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit basic information for user profile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>first_name</strong> &#8211; first name of user</li>
+<li><strong>last_name</strong> &#8211; last name of user</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-control-panel">
+<code class="descname">GET </code><code class="descname">/user/control-panel</code><a class="headerlink" href="#get--user-control-panel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display basic control panel for user.</p>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-control-panel">
+<code class="descname">POST </code><code class="descname">/user/control-panel</code><a class="headerlink" href="#post--user-control-panel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display basic control panel for user.</p>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-unsubscribe">
+<code class="descname">GET </code><code class="descname">/user/unsubscribe</code><a class="headerlink" href="#get--user-unsubscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unsubscribe current user using stripe ID from database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stripe_token</strong> (<em>str</em>) &#8211; stripe ID</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-register">
+<code class="descname">GET </code><code class="descname">/user/register</code><a class="headerlink" href="#get--user-register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register user based on form parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>username</strong> &#8211; username</li>
+<li><strong>password</strong> &#8211; password</li>
+<li><strong>email</strong> &#8211; email address for user</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-register">
+<code class="descname">POST </code><code class="descname">/user/register</code><a class="headerlink" href="#post--user-register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register user based on form parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>username</strong> &#8211; username</li>
+<li><strong>password</strong> &#8211; password</li>
+<li><strong>email</strong> &#8211; email address for user</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-gallery-">
+<code class="descname">GET </code><code class="descname">/user/gallery/</code><a class="headerlink" href="#get--user-gallery-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Personal gallery for user wherein they can delete and edit photos.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>page</strong> (<em>int</em>) &#8211; page number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-upload">
+<code class="descname">GET </code><code class="descname">/user/upload</code><a class="headerlink" href="#get--user-upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload file given information from form.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>photo</strong> &#8211; file to be uploaded</li>
+<li><strong>title</strong> &#8211; title</li>
+<li><strong>desc</strong> &#8211; description</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-upload">
+<code class="descname">POST </code><code class="descname">/user/upload</code><a class="headerlink" href="#post--user-upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload file given information from form.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>photo</strong> &#8211; file to be uploaded</li>
+<li><strong>title</strong> &#8211; title</li>
+<li><strong>desc</strong> &#8211; description</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-logout">
+<code class="descname">GET </code><code class="descname">/user/logout</code><a class="headerlink" href="#get--user-logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logout the current user.</p>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-search">
+<code class="descname">POST </code><code class="descname">/user/search</code><a class="headerlink" href="#post--user-search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initiate search based on whether or not search form parameters are validated.</p>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-login">
+<code class="descname">GET </code><code class="descname">/user/login</code><a class="headerlink" href="#get--user-login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login user using credentials from form.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>username</strong> &#8211; username</li>
+<li><strong>password</strong> &#8211; password</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-login">
+<code class="descname">POST </code><code class="descname">/user/login</code><a class="headerlink" href="#post--user-login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login user using credentials from form.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>username</strong> &#8211; username</li>
+<li><strong>password</strong> &#8211; password</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-hook-">
+<code class="descname">POST </code><code class="descname">/user/hook/</code><a class="headerlink" href="#post--user-hook-" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receive webhooks from Stripe for subscription events.</p>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-pro">
+<code class="descname">GET </code><code class="descname">/user/pro</code><a class="headerlink" href="#get--user-pro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow user to manage their subscription. This includes both signing up for a subscription and removing it.</p>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-pro">
+<code class="descname">POST </code><code class="descname">/user/pro</code><a class="headerlink" href="#post--user-pro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow user to manage their subscription. This includes both signing up for a subscription and removing it.</p>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-search_results-(query)-(int-page)">
+<code class="descname">GET </code><code class="descname">/user/search_results/</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">int: </em><em>page</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-search_results-(query)-(int-page)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return paginated search results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>query</strong> (<em>str</em>) &#8211; search terms</li>
+<li><strong>page</strong> (<em>int</em>) &#8211; page number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-(username)-gallery-(int-page)">
+<code class="descname">GET </code><code class="descname">/user/</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><code class="descname">/gallery/</code><span class="sig-paren">(</span><em class="property">int: </em><em>page</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-(username)-gallery-(int-page)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Public paginated gallery for user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>username</strong> (<em>str</em>) &#8211; username</li>
+<li><strong>page</strong> (<em>int</em>) &#8211; page number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-search_results-(query)">
+<code class="descname">GET </code><code class="descname">/user/search_results/</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-search_results-(query)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return paginated search results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>query</strong> (<em>str</em>) &#8211; search terms</li>
+<li><strong>page</strong> (<em>int</em>) &#8211; page number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-remove-photo-(int-image_id)">
+<code class="descname">GET </code><code class="descname">/user/remove-photo/</code><span class="sig-paren">(</span><em class="property">int: </em><em>image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-remove-photo-(int-image_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete image ID if image belongs to current user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image_id</strong> (<em>int</em>) &#8211; image ID</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-view-profile-(username)">
+<code class="descname">GET </code><code class="descname">/user/view-profile/</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-view-profile-(username)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Present public profile of user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>username</strong> (<em>str</em>) &#8211; username</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-edit-photo-(int-image_id)">
+<code class="descname">GET </code><code class="descname">/user/edit-photo/</code><span class="sig-paren">(</span><em class="property">int: </em><em>image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-edit-photo-(int-image_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit image properties, including title and description.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image_id</strong> (<em>int</em>) &#8211; image ID</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--user-edit-photo-(int-image_id)">
+<code class="descname">POST </code><code class="descname">/user/edit-photo/</code><span class="sig-paren">(</span><em class="property">int: </em><em>image_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--user-edit-photo-(int-image_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit image properties, including title and description.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image_id</strong> (<em>int</em>) &#8211; image ID</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-gallery-(int-page)">
+<code class="descname">GET </code><code class="descname">/user/gallery/</code><span class="sig-paren">(</span><em class="property">int: </em><em>page</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-gallery-(int-page)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Personal gallery for user wherein they can delete and edit photos.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>page</strong> (<em>int</em>) &#8211; page number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-photo-(int-photo_id)">
+<code class="descname">GET </code><code class="descname">/user/photo/</code><span class="sig-paren">(</span><em class="property">int: </em><em>photo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-photo-(int-photo_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>View the specified photo.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>photo_id</strong> (<em>int</em>) &#8211; photo ID</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-(username)-gallery">
+<code class="descname">GET </code><code class="descname">/user/</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><code class="descname">/gallery</code><a class="headerlink" href="#get--user-(username)-gallery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Public paginated gallery for user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>username</strong> (<em>str</em>) &#8211; username</li>
+<li><strong>page</strong> (<em>int</em>) &#8211; page number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="public.html"
+                        title="previous chapter">public blueprint</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/users.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Casey Weed, Dax Lloyd, William McMullen, Christopher Wilson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      
+      |
+      <a href="_sources/users.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>

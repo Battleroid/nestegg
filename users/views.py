@@ -23,10 +23,14 @@ def before_request():
 stripe.api_key = stripe_keys.secret
 
 def update_sub(stripe_customer_id, end_date):
-    '''Update subscription for user (such as moving end date for subscription).'''
+    """
+    Updates the subscription status and end date for a particular customer based on stripe ID.
+
+    :param str stripe_customer_id: Stripe customer ID
+    :param DateTime end_date: End date object for customer subscription
+    """
     user = User.query.filter_by(stripe_token=stripe_customer_id).first()
     timestamp = datetime.datetime.fromtimestamp(end_date)
-    print user
     if not user:
         return
     user.pro_expiration = timestamp
@@ -34,10 +38,11 @@ def update_sub(stripe_customer_id, end_date):
     db.session.commit()
 
 def cancel_sub(stripe_customer_id, end_date):
-    '''Cancel subscription for user, move end date.'''
+    """
+    Cancel subscription for user matching Stripe ID and move end date for subscription status.
+    """
     user = User.query.filter_by(stripe_token=stripe_customer_id).first()
     timestamp = datetime.datetime.fromtimestamp(end_date)
-    print user
     if not user:
         return
     user.pro_expiration = timestamp
@@ -46,12 +51,13 @@ def cancel_sub(stripe_customer_id, end_date):
 
 @users_blueprint.route('/hook/', methods=['POST'])
 def hook():
-    '''Receive and process webhooks for subscription updates/deletions.'''
+    """
+    Receive webhooks from Stripe for subscription events.
+    """
     if not request.json or not request.json.get('id'):
         return Response(status=406)
     payload = request.json
     event = stripe.Event.retrieve(payload.get('id'))
-    print event
     if event.type == 'customer.subscription.deleted':
         cancel_sub(event.data.object.customer, event.data.object.ended_at)
     elif event.type == 'customer.subscription.updated':
@@ -61,6 +67,11 @@ def hook():
 @users_blueprint.route('/unsubscribe', methods=['GET'])
 @login_required
 def unsubscribe():
+    """
+    Unsubscribe current user using stripe ID from database.
+
+    :param str stripe_token: stripe ID
+    """
     if not current_user.pro_status:
         flash('You cannot unsubscribe unless you have a subscription.', 'error')
         return redirect(url_for('users.control_panel'))
@@ -75,7 +86,9 @@ def unsubscribe():
 @users_blueprint.route('/pro', methods=['GET', 'POST'])
 @login_required
 def pro():
-    '''Allows user to manage their subscription. This includes removing their subscription (ending it immediately afaik, work with Stripe for delayed end?) and subscribing.'''
+    """
+    Allow user to manage their subscription. This includes both signing up for a subscription and removing it.
+    """
     if request.method == 'POST' and current_user.pro_status:
         flash('Cannot subscribe if already a subscriber.', 'error')
         return redirect(url_for('users.control_panel'))
@@ -99,11 +112,18 @@ def pro():
 @users_blueprint.route('/control-panel', methods=['GET', 'POST'])
 @login_required
 def control_panel():
-    '''Basic control panel where all user specific configuration options are made available.'''
+    """
+    Display basic control panel for user.
+    """
     return render_template('control_panel.html', title='Control Panel')
 
 @users_blueprint.route('/photo/<int:photo_id>')
 def view_photo(photo_id):
+    """
+    View the specified photo.
+
+    :param int photo_id: photo ID
+    """
     photo = File.query.filter(File.id == photo_id).first()
     if not photo_id or not photo:
         flash('Photo does not exist!', 'error')
@@ -118,7 +138,12 @@ def view_photo(photo_id):
 @users_blueprint.route('/<username>/gallery')
 @users_blueprint.route('/<username>/gallery/<int:page>')
 def public_gallery(username, page=1):
-    '''Paginated public gallery of user.'''
+    """
+    Public paginated gallery for user.
+
+    :param str username: username
+    :param int page: page number
+    """
     user = User.query.filter_by(username=username).first()
     if not user:
         return redirect(url_for('public.index'))
@@ -133,7 +158,11 @@ def public_gallery(username, page=1):
 @users_blueprint.route('/gallery/<int:page>')
 @login_required
 def gallery(page=1):
-    '''Paginated gallery. From here users can delete photos, possibly edit, make public, etc.'''
+    """
+    Personal gallery for user wherein they can delete and edit photos.
+
+    :param int page: page number
+    """
     photos = current_user.files.with_entities(File.id, File.name, File.filename).paginate(page, 12, False)
     return render_template('gallery.html', title='Your Photos', photos=photos)
 
@@ -141,7 +170,13 @@ def gallery(page=1):
 @users_blueprint.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
-    '''Upload file and attach title/description.'''
+    """
+    Upload file given information from form.
+
+    :form photo: file to be uploaded
+    :form title: title
+    :form desc: description
+    """
     form = UploadForm()
     if request.method == 'POST' and form.validate_on_submit():
         if allowed_filename(form.photo.data.filename):
@@ -162,7 +197,12 @@ def upload_file():
 @users_blueprint.route('/edit-profile/about', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    '''Edit basic information for user, including about, first/last name.'''
+    """
+    Edit basic information for user profile.
+
+    :form first_name: first name of user
+    :form last_name: last name of user
+    """
     form = EditProfile(obj=current_user)
     if request.method == 'POST' and form.validate_on_submit():
         current_user.first_name = form.first_name.data if form.first_name.data else current_user.first_name
@@ -177,7 +217,13 @@ def edit_profile():
 @users_blueprint.route('/edit-profile/security', methods=['GET', 'POST'])
 @login_required
 def edit_security():
-    '''Change password for user.'''
+    """
+    Edit password for user.
+
+    :form current_password: current password for user
+    :form password: new password for user
+    :form confirm: new password confirmation
+    """
     form = PasswordForm()
     if request.method == 'POST' and form.validate_on_submit():
         if current_user.check_password(form.current_password.data):
@@ -192,12 +238,22 @@ def edit_security():
 
 @users_blueprint.route('/view-profile/<username>')
 def view_profile(username):
-    '''Present public profile of user.'''
+    """
+    Present public profile of user.
+    
+    :param str username: username
+    """
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('profile.html', title='Public Profile of ' + user.username, user=user)
 
 @users_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Login user using credentials from form.
+
+    :form username: username
+    :form password: password
+    """
     form = LoginForm()
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -214,12 +270,22 @@ def login():
 @users_blueprint.route('/logout')
 @login_required
 def logout():
+    """
+    Logout the current user.
+    """
     logout_user()
     flash('Goodbye.')
     return redirect(url_for('public.index'))
 
 @users_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    Register user based on form parameters.
+
+    :form username: username
+    :form password: password
+    :form email: email address for user
+    """
     form = RegisterForm()
     if request.method == 'POST' and form.validate_on_submit():
         try:
@@ -241,7 +307,11 @@ def register():
 @users_blueprint.route('/remove-photo/<int:image_id>', methods=['GET'])
 @login_required
 def remove_photo(image_id):
-    '''Remove photo ID if it exists and belongs to currently logged in user.'''
+    """
+    Delete image ID if image belongs to current user.
+
+    :param int image_id: image ID
+    """
     if not image_id or not current_user.files.filter(File.id == image_id).first():
         flash('That image does not exist.', 'error')
         return redirect(url_for('users.control_panel'))  # for now redirect to CP, as gallery is not functional yet
@@ -260,6 +330,11 @@ def remove_photo(image_id):
 @users_blueprint.route('/edit-photo/<int:image_id>', methods=['GET', 'POST'])
 @login_required
 def edit_photo(image_id):
+    """
+    Edit image properties, including title and description.
+
+    :param int image_id: image ID
+    """
     if not image_id or not current_user.files.filter(File.id == image_id).first():
         flash('That image does not exist.', 'error')
         return redirect(url_for('users.control_panel'))
@@ -277,7 +352,9 @@ def edit_photo(image_id):
 # TODO: Double check if working after fixing g/current_user object
 @users_blueprint.route('/search', methods=['POST'])
 def search():
-    '''Need to setup for both anon/non-pro and pro search.'''
+    """
+    Initiate search based on whether or not search form parameters are validated.
+    """
     if not g.search_form.validate_on_submit():
         return redirect(url_for('public.index'))
     return redirect(url_for('users.search_results', query=g.search_form.search_term.data))
@@ -285,14 +362,26 @@ def search():
 @users_blueprint.route('/search_results/<query>')
 @users_blueprint.route('/search_results/<query>/<int:page>')
 def search_results(query, page=1):
+    """
+    Return paginated search results.
+
+    :param str query: search terms
+    :param int page: page number
+    """
     search = File.query.whoosh_search(query)
     results = search.paginate(page, 12, False)
     return render_template('search.html', title='Results for %s' % query, query=query, photos=results)
 
 @users_blueprint.app_template_filter()
 def timesince(z):
+    """
+    Return a human readable time in format of when the post was made.
+    """
     return humanize.naturaltime(z)
 
 @users_blueprint.app_template_filter()
 def datetimeformat(z, format='%Y-%m-%d'):
+    """
+    Format time in short date format.
+    """
     return z.strftime(format)

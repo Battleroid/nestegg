@@ -17,7 +17,7 @@ def main():
 @click.option('--port', default=5000)
 def run(config, host, port):
     """Start Nestegg with specified configuration."""
-    c = {'dev': 'Development', 'testing': 'Testing', 'prod': 'Production'}
+    c = {'dev': 'Development', 'test': 'Testing', 'prod': 'Production'}
     app.config.from_object('config.%s' % c[config])
     dbg = DebugToolbarExtension(app)
     app.run(host=host, port=port)

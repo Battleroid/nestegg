@@ -40,6 +40,9 @@ def update_sub(stripe_customer_id, end_date):
 def cancel_sub(stripe_customer_id, end_date):
     """
     Cancel subscription for user matching Stripe ID and move end date for subscription status.
+
+    :param str stripe_customer_id: stripe ID
+    :param DateTime end_date: end date DateTime object
     """
     user = User.query.filter_by(stripe_token=stripe_customer_id).first()
     timestamp = datetime.datetime.fromtimestamp(end_date)
@@ -88,6 +91,9 @@ def unsubscribe():
 def pro():
     """
     Allow user to manage their subscription. This includes both signing up for a subscription and removing it.
+
+    :form stripeToken: token from Stripe.js
+    :form stripeEmail: email address for customer
     """
     if request.method == 'POST' and current_user.pro_status:
         flash('Cannot subscribe if already a subscriber.', 'error')

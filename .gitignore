@@ -9,3 +9,4 @@ static/min
 *.swp
 *.db
 *.pyc
+*.swo

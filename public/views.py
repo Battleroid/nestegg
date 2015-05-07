@@ -9,15 +9,15 @@ public_blueprint = Blueprint(
 
 @public_blueprint.route('/tos')
 def tos():
-    return 'tos'
+    return render_template('tos.html')
 
 @public_blueprint.route('/privacy')
 def privacy():
-    return 'privacy policy'
+    return render_template('privacy.html')
 
 @public_blueprint.route('/about')
 def about():
-    return 'about'
+    return render_template('about.html')
 
 @public_blueprint.route('/')
 def index():

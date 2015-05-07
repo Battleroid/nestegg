@@ -16,7 +16,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm Password', [DataRequired(), EqualTo('password', 'Passwords must match.')])
     email = StringField('Email Address', [DataRequired(), Email(message='Not a valid email.')])
     agree_to_tos = BooleanField('I agree to the Terms of Service', [InputRequired()])
-    # recaptcha = RecaptchaField()  # disable temporarily while in development
+    recaptcha = RecaptchaField()  # disable temporarily while in development
     submit = SubmitField('Sign Up')
 
 class UploadForm(Form):

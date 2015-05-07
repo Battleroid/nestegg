@@ -17,7 +17,7 @@
                     {{ form.agree_to_tos(**{'required':''}) }}
                     <span class="label-body">{{ form.agree_to_tos.label }}</span>
                 </label>
-{#                {{ form.recaptcha(class='u-full-width recaptcha') }}#}
+                {{ form.recaptcha(class='u-full-width recaptcha') }}
             </div>
         </div>
         {{ form.submit(class='button-primary') }}

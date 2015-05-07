@@ -14,6 +14,6 @@
     {% if not user.files.count() %}
         <p>This user has not uploaded anything yet!</p>
     {% else %}
-        <p>{{ user.username }} has a total of {{ user.files.count() }}(s).</p>
+	<p>{{ user.username }} has a total of {{ user.files.count() }} file(s). View their <a href="{{ url_for('users.public_gallery', username=user.username) }}">gallery</a>.</p>
     {% endif %}
 {% endblock %}

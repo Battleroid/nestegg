@@ -4,6 +4,8 @@ from flask_cache import Cache
 from flask_login import LoginManager, current_user
 from flask_assets import Environment, Bundle
 from flask_images import Images
+from flask_session import Session
+import config, os
 from flask import Flask, render_template, g
 from users.forms import Search
 
@@ -15,9 +17,6 @@ db = SQLAlchemy(app)
 
 # Bcrypt
 bc = Bcrypt(app)
-
-# Cache
-cache = Cache(app, config={'CACHE_TYPE': 'redis'})
 
 # Assets
 assets = Environment(app)
@@ -63,3 +62,8 @@ def load_user(user_id):
 def before_request():
     g.user = current_user
     g.search_form = Search()
+
+if __name__ == '__main__':
+    app.config.from_object('config.%s' % os.environ.get('NESTEGG_CONFIG', 'Config'))
+    Session(app)
+    app.run()

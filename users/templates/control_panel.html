@@ -16,7 +16,7 @@
         <div class="panel">
             <h4>Payment Information</h4>
             <div class="row">
-                <p>{% if current_user.pro_status %}You're current a Pro member.{% else %}You do not currently have a Pro subscription. <a href="{{ url_for('users.pro') }}">Sign up</a> for one.{% endif %}</p>
+				<p>{% if current_user.pro_status %}You're currently a Pro member. Would you like to <a href="{{ url_for('users.pro') }}">cancel?</a>{% else %}You do not currently have a Pro subscription. <a href="{{ url_for('users.pro') }}">Sign up</a> for one.{% endif %}</p>
             </div>
         </div>
     </div>

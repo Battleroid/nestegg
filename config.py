@@ -10,6 +10,7 @@ class Config(object):
     UPLOAD_DIRECTORY = 'static/files'
     IMAGE_URL_PATH = 'files/'
     IMAGES_PATH = [UPLOAD_DIRECTORY]
+    SECRET_KEY = 'changeme'
 
 class Development(Config):
     DEBUG = True

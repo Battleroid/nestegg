@@ -1,0 +1,328 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{textcomp}
+\usepackage{framed}
+\usepackage{parskip}
+\usepackage{cleveref}
+\usepackage{grffile} % remove filenames above includegraphics
+
+% font
+%\renewcommand{\familydefault}{\sfdefault}
+
+% force page break after section/subsection end
+\newcommand\sectionbreak{\ifnum\value{section}>1\clearpage\fi}
+\newcommand\subsectionbreak{\ifnum\value{subsection}>1\clearpage\fi}
+%\newcommand\subsubsectionbreak{\ifnum\value{subsubsection}>1\clearpage\fi}
+
+% note blocks
+\definecolor{shadecolor}{gray}{0.95}
+\definecolor{green}{RGB}{39,156,70}
+\definecolor{code}{RGB}{207,31,43}
+
+% code cmd
+\newcommand{\cmd}[1]{\textcolor{code}{\texttt{#1}}}
+\definecolor{light-gray}{gray}{0.95}
+\lstset{
+  frame=trBL,
+  commentstyle=\color{green},
+  numberstyle=\tiny,
+  backgroundcolor=\color{light-gray},
+  basicstyle=\footnotesize\ttfamily,
+  numbers=left,
+  title=\lstname,
+  tabsize=2
+}
+\captionsetup[lstlisting]{font={small,tt}}
+
+\newcommand{\image}[2][]{
+    \begin{figure}[!htbp]\centering\includegraphics[width=0.85\linewidth]{#2}\end{figure}
+}
+
+% margin note
+\newcommand{\mnote}[1]{
+  \marginpar{
+    \small{\textbf{Note:}} \\
+    \raggedright \small{#1}
+  }
+}
+
+% framed block note
+\newcommand\note[1]{
+	\vspace{12pt}
+	
+	\begin{centering}
+	\hfill
+	\fcolorbox{black}{light-gray} 
+    {
+    \begin{minipage}{\textwidth}
+    \vspace{4pt}
+    	\textbf{Note:}
+    	\vspace{8pt}
+    	
+    	#1
+    \vspace{4pt}
+    \end{minipage}
+    }
+    \hfill
+    \end{centering}
+    
+    \vspace{12pt}
+}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[LE,RO]{\slshape \rightmark}
+\fancyhead[LO,RE]{\slshape \leftmark}
+\fancyfoot[C]{\thepage}
+
+
+% title info
+\title{Nestegg Developer and User Manual}
+\author{Casey Weed, Dax Lloyd, William McMullen, Christopher Wilson}
+\date{May 7, 2015}
+
+\begin{document}
+	% title page
+	\maketitle
+	\thispagestyle{empty} % remove numbering for first page
+	
+	% toc, reset counter on beginning of content
+	\newpage
+	\setcounter{tocdepth}{4}
+	\tableofcontents
+	\thispagestyle{empty}
+	\clearpage
+	
+	% reset counter
+	\setcounter{page}{1}
+	
+	\section{Developer's Manual}
+		
+		\subsection{Technical Description Preface}
+			Nestegg uses a variety of technology to establish its presence. The purpose and execution of each is briefly detailed below.		
+				
+			\subsubsection{Front-End Design}
+				We used HTML, CSS, and a minor amount of JavaScript with jQuery for the front-end graphics and development of Nestegg. We used a HTML \& CSS framework called ``Skeleton''\footnote{\url{http://getskeleton.com}} as a boilerplate template to structure the general design and feel for the site. The Skeleton framework allows for the site to be used on mobile devices as it is a responsive CSS design. Simplicity and ease of use were the main goals in designing Nestegg and Skeleton facilitated that.
+				
+			\subsubsection{Back-End Design}
+				\begin{description}
+					\item[Python] The primary language for the application was written using Python. Python is a high-level object oriented programming language.
+					\item[Flask] The micro web framework used to create the entirety of the application. Flask follows a more ``hands off'' doctrine giving the developer freedom to apply solutions how they see fit.
+					\item[SQLAlchemy] A Python ORM made for enterprise solutions, performs well at scale and is ideal for large scale operations. However, its API can be tricky to use at times.
+					\item[MySQL] DBMS to store the information acquired from users. Nestegg requires only two tables (one for user information, another for files) in a single database to function.
+					\item[Redis] Open source, BSD licensed, advanced key/value (dictionary) in-memory store. We used Redis to store client session information instead of using the default method of file based caching to avoid needless I/O strain.
+					\item[Stripe] Merchant\footnote{\url{https://stripe.com}} and financial information management. Stripe sports a robust API that is secure, and makes it incredibly easy to handle payments.\par For each transaction a unique ID and event type is created for each user when they submit their payment information. This ID is then stored in our database and is used to cancel the subscription at another point in time.\par Stripe's Webhooks allow us to automate the process of canceling user subscriptions once they expire or cannot be renewed. We manage an endpoint on the server which Stripe sends a JSON payload to, we then retrieve the unique customer ID from the payload and remove the user's Pro account status.
+					\item[Google reCAPTCHA] Google's CAPTCHA\footnote{\url{https://www.google.com/recaptcha/intro/index.html}} service is simple to use. The short simple bot-resistant test lets us filter humans from automated users.
+				\end{description}
+				
+		\subsection{Setup}
+			You should have a copy of the Nestegg application on hand and have it extracted onto the target machine which will be hosting the application before proceeding.
+			
+			\note{This guide assumes all the services will be installed to the same machine.}
+			Nestegg deploys like any other typical web application written using Django, web2py, and so on. If you have experience deploying any applications using these web frameworks you should be familiar with the process. However, before we are able to install the application itself, several services need to be installed and configured beforehand.			
+			
+			\subsubsection{Installing MySQL}
+				\begin{enumerate}
+					\item You will need to install MySQL for your required platform. For Debian based platforms you can use \texttt{Apt} package manager to install MySQL server using \cmd{apt-get install mysql-server mysql-client}. Additional packages required by the client and server packages will be included automatically by Apt.
+					\item During the installation you will be required to enter a password for the root user. Set the password and remember it, it will be required for creating our user for Nestegg later on.
+					\item After the installation completes running \cmd{mysql\_secure\_installation} is highly recommended if in a production setting\footnote{\cmd{mysql\_secure\_installation} will perform execute simple security measures ideal for a production environment. You may skip this if in a development setting.}
+					\item Login to the root user for MySQL using \cmd{mysql -u root -p}. You will then be asked to enter the root password from earlier, input it now.
+					\item Now we will need to execute the SQL script included with Nestegg (\cmd{create\_db.sql}). Before running it is recommended that you change password for the \cmd{nestegg} user, see~\cref{lst:createdbsql} for the line of interest.
+						\lstinputlisting[numbers=none,firstline=2,lastline=2,label={lst:createdbsql},caption=create\_db.sql,language=SQL]{create_db.sql}
+					\item To execute the SQL script, run \cmd{source create\_db.sql}.
+					\item To check if the database was created successfully run \cmd{show databases;} and check if \cmd{nestegg} is included in the list of databases.
+				\end{enumerate}
+			\subsubsection{Installing Redis}
+				Installing Redis is very straightforward with Debian based systems. Simply run \cmd{apt-get install redis-server}. The default options are satisfactory for Nestegg.
+			\subsubsection{Installing Python}
+				Similar to Redis, installing Python is an easy process. On Debian based system run \cmd{apt-get install python27 python27-dev python-pip}.
+			\subsubsection{Installing Nestegg Requirements}
+				Convenient for us, installing Nestegg's list of required Python packages is made easy thanks to PIP. To install these packages run \cmd{pip install -r requirements.txt} using the \cmd{requirements.txt} from the Nestegg package.
+				
+				If you encounter an error while installing \cmd{python-bcrypt} you may need to install the \cmd{bcrypt} package using Apt.
+			\subsubsection{Signing up for Google reCAPTCHA}
+				\begin{enumerate}
+					\item Navigate to \url{https://www.google.com/recaptcha/} and create a new site with your domain (if using localhost for development simply enter `localhost').
+					\item Keep the `Site' and `Secret' key on hand, we will need them later for configuring reCAPTCHA within Nestegg.				
+				\end{enumerate}
+				
+				% note here that you will need a google account
+
+			\subsubsection{Signing up for Stripe}
+				Stripe is a merchant and provides a fantastic API for all kinds of financial transactions and a handy dandy web interface from which to observe or manage all of your data. Near the end of the sign up process we will need the `Public' and `Private' keys. Afterwards we'll create the webhook endpoint.
+				
+				\begin{enumerate}
+					\item Navigate to \url{https://stripe.com}.
+					\item If you are already a member then sign in, if not from the Sign In page choose Sign Up, fill in the appropriate information and login.
+					\item At the dashboard in the top-right corner, click your account name and from the resulting dropdown list choose ``Account Settings''.
+					\item From the top portion of modal dialog, choose ``API Keys''.
+					\item Copy the set of keys appropriate for your environment (e.g. if in development using testing keys, production use live).
+					\item Next transition to the ``Webhooks'' tab.
+					\item Press ``Add endpoint''.
+					\item Enter the URL from which you will be hosting the application and append \cmd{/user/hook}. This will be the URL which Stripe will send event information to for processing. If you are testing or developing from a local machine you will need to sign up and use the URL provided by the Ultrahook\footnote{\url{http://ultrahook.com} allows you to perform testing with Stripe Webhooks from local machines.} service.
+					\item Then select the appropriate mode.
+					\item Next, Choose the radio item ``Select events''.
+					\item From the list of events choose only ``customer.subscription.deleted'' and ``customer.subscription.updated''.
+					\item Finally, press the ``Create Endpoint'' button.
+				\end{enumerate}					
+		
+		\subsection{Configuration}
+			Before we can run the application we must configure it to use the services we've installed earlier.
+			
+			\subsubsection{Customizing \cmd{config.py}}
+				\cmd{config.py} contains the majority of the configurable content for Nestegg. Including the database URI, reCATPCHA keys and more. We are primarily concerned with the first three lines under the \cmd{Config} object.
+				
+				\lstinputlisting[firstnumber=3,firstline=3,lastline=13,language=python,label={lst:configpy},caption=config.py,breaklines=true]{config.py}
+				
+				\begin{itemize}
+					\item Replace the reCAPTCHA public and private keys with the keys were attained earlier (see~\cref{lst:configpy} line \textnumero\ 5-6).
+					\item Replace the database URI in \cmd{SQLALCHEMY\_DATABASE\_URI} on with the appropriate  credentials (see~\cref{lst:configpy} on line \textnumero\ 4).
+					\item Replace the contents of \cmd{SECRET\_KEY} with a long and preferably completely random string. This is used for signing sessions and other cryptographic information.
+				\end{itemize}
+				
+				The remaining information such as \cmd{IMAGES\_SET} and \cmd{UPLOAD\_DIRECTORY} can also be configured, but it is recommended to leave them as is.
+				
+			\subsubsection{Customizing \cmd{stripe\_keys.py}}
+				The Stripe API keys must be configured within Nestegg to access your account's credentials.
+				
+				\begin{enumerate}
+					\item Create a new Python file labeled \cmd{stripe\_keys.py} within the root folder of Nestegg.
+					\item Within the file enter the following, replacing the contents of the public and secret keys with those from Stripe (see~\cref{lst:stripekeys}).
+					\begin{lstlisting}[language=python,numbers=none,label={lst:stripekeys},caption=stripe\_keys.py]
+public = 'public_key'
+secret = 'secret_key'
+					\end{lstlisting}
+					\item Save the file.
+				\end{enumerate}
+			\subsubsection{Establishing Static Directories and MySQL}
+				Before Nestegg can be run a the static directory (as defined in \cmd{config.py} must be created along with the appropriate tables in the MySQL database. This is incredibly easy using \cmd{run.py}. See~\cref{app:schema} for a diagram of the database tables.
+				
+				\begin{enumerate}
+					\item Perform \cmd{python run.py setup\_dirs}. The static directory for uploaded content will be created.
+					\item Nest, execute \cmd{python run.py reset --yes}. This will use the information from \cmd{config.py} to create our tables.
+				\end{enumerate}							
+			
+		\subsection{Deployment}
+			For our purposes deployment on a small scale is easy. Large scale deployment is more involved and the gist of large scale deployment will be explained.
+			
+			\subsubsection{Small Scale}
+				Using \cmd{run.py} we can start a small server fit for low traffic or development purposes.
+				
+				Execute \cmd{python run.py run} to start a server accessible via the local machine at port 5000. If you would like to make the server public, use the \cmd{--host} parameter to change the host IP to \cmd{0.0.0.0}, for example \cmd{python run.py run --host=0.0.0.0}. The same process can be used to change the port, just use the \cmd{--port} argument. If you need further assistance see the help dialog for more information (\cmd{python run.py run --help}).
+				
+			\subsubsection{Large Scale}
+				Large scale operations need to be able to process thousands of requests per second. This is a problem for the built-in Werkzeug server. The solution is to use a combination of software (namely nginx, supervisor, uwsgi and optionally virtualenv) to provide the application.
+				
+				\paragraph{Nginx}
+					Nginx is ideal for reverse proxies, HTTP load balancing or in general handling large amounts of concurrent requests. The configuration setup is quite simple for Nginx, simply create a new server block directive with the following in~\cref{lst:nginxconf}.
+					
+					\begin{lstlisting}[numbers=none,tabsize=2,caption=Nginx Example,label={lst:nginxconf}]
+upstream nestegg {
+	server http://your.internal.server.address;
+}
+
+server {
+	listen 80;
+	server_name your.url.com;
+	
+	location / {
+		include uwsgi_params;
+		uwsgi_pass nestegg;
+		
+		proxy_redirect off;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Host $server_name;
+	}
+}
+					\end{lstlisting}
+					
+					You would need to replace the contents of the server(s) in the upstream block with the internal address(es) the application(s) are hosted on. After your edits be sure to reload or restart Nginx using (depending on the system) \cmd{systemctl restart nginx}.
+					
+				\paragraph{uWSGI} To host the application itself without using the built-in server you will need uWSGI. Installing it is easy, just run \cmd{pip install uwsgi}. Configuring it is more involved. We will use this with Supervisor to manage the application.
+				
+				\paragraph{Supervisor} Supervisor is a Python ``Process Control System''\footnote{\url{http://supervisord.org/}}. Using Apt or your preferred package manager run \cmd{apt-get install supervisor}. The directory \cmd{/etc/supervisor} should have been created. Within \cmd{conf.d/} we will create a new configuration file for our application.
+				
+				Label the new configuration file whatever you wish but be sure to append \cmd{.conf} to the filename. The general filename is irrelevant as Supervisor will look for the program name within the configuration file's contents for identification. In~\cref{lst:supervisor} you will a basic configuration for Nestegg.
+				
+				\begin{lstlisting}[numbers=none,breaklines=true,caption=nestegg.conf,label={lst:supervisor}]
+[program:nestegg]
+user=youruser
+group=yourgroup
+directory=/path/to/nestegg/
+environment=NESTEGG_CONFIG=Config,HOME=/path/to/optional/virtualenv
+command=/path/to/uwsgi -H /path/to/optional/virtualenv -w nestegg:app -M -p 2 --http :5000
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/nestegg_out.log
+stderr_logfile=/var/log/nestegg_err.log
+				\end{lstlisting}
+				
+				\note{The arguments \cmd{HOME} and \cmd{-H /path/to/optional/virtualenv} are considering optional as the packages required for Nestegg can be installed system-wide.
+				
+				\vspace{11pt}
+				Using a Python virtual environment is completely optional (using \cmd{virtualenv}), but ideal for systems that have may use many versions of the same packages for other services.}
+				
+				After saving the uWSGI configuration file we will need to update Supervisor with our changes. As root or a privileged user, execute \cmd{supervisorctl}. From Supervisor we need to run \cmd{reread}, then \cmd{update}. Our application should have already started, we can confirm this by using \cmd{status} and search for the Nestegg process. If it has not, try to start it using \cmd{start nestegg}. You can then exit Supervisor with \cmd{exit}.
+				
+				If you encounter any issues starting application via Supervisor you can review the logs we established in the configuration file or the logs for the supervisor process of Nestegg under \cmd{/var/log/supervisor/}.
+				
+	\section{User's Manual}
+	
+		\subsection{Signing Up}
+			\begin{enumerate}
+				\item Navigate to the Nestegg homepage and click the ``Register'' link at the top of the page. \image{images/Register 1.jpg}					
+				\item You will be taken to the registration page. \image{images/Register 2.jpg}
+				\item Fill in your information in the fields on the page and click the Sign Up button. \image{images/Register 3.jpg}
+				\item You will automatically be taken to your profile page. You can use the view and edit links to change the information that you have set on the site that you want other users to be able to see. You can click the change password link to change your account password. You will also be able to see anything that you uploaded by clicking the view link for the gallery. \image{images/Register 4.jpg}
+			\end{enumerate}
+		
+		\subsection{Pro Membership}
+			\begin{enumerate}
+				\item Click the login button on the top navigation bar of the site and enter your login information. \image{images/Pro 1.jpg}
+				\item After signing in you will be taken to your profile page. Under payment information you will see the phrase ``You do not currently have a Pro subscription. Sign up for one.'' Click ``Sign Up''. You will then be taken to the subscription page. \image{images/Pro 2.png}
+				\item After you have reached the subscription page, click on the ``Subscribe'' button. \image{images/Pro 3.jpg}
+				\item After clicking the subscribe button you will be prompted to enter your financial information. \image{images/Pro 4.jpg}
+				\item After you enter your payment information and click the ``Pay'' button you will be taken to the subscription confirmation page. This will also tell you the date that your subscription is set to renew automatically.
+			\end{enumerate}
+		
+		\subsection{Uploading a File}
+			\begin{enumerate}
+				\item While you are logged into the site click on the Upload link at the navigation bar at the top of the page and you will be taken to the upload page. Enter a name for the file that is being uploaded. \image{images/Upload 1.png}
+				\item Enter a description of the file and any other information that you would like to be displayed when someone views the file in the description box. \image{images/Upload 2.jpg}
+				\item Click the choose file button and a window will pop up that will allow you to choose which file you would like to upload. \image{images/Upload 3.jpg}
+				\item After choosing the file that you would like to upload click on the Upload button. \image{images/Upload 4.jpg}
+				\item After uploading the file you will be taken back to your profile page and you will be able to click on the gallery link to be able to see the file and any others that you have uploaded. \image{images/Upload 5.jpg}
+			\end{enumerate}
+			
+		\subsection{Editing \& Deleting a File}
+			\begin{enumerate}
+				\item From your profile page click on the ``View All'' link next to your gallery. \image{images/edit delete 1.jpg}
+				\item You will be taken to your gallery page and all of the files that you have uploaded will be displayed. \image{images/edit delete 2.jpg}
+				\item Mouse over the file you wish to edit and the option to either delete or edit will appear over the file (pressing delete will remove the file). \image{images/edit delete 3.jpg}
+				\item Pressing edit will take you to the edit page for that particular file. From here you can change the file's title or description. When finished press ``Save Changes''. \image{images/edit delete 5.jpg}
+			\end{enumerate}
+			
+		\subsection{Searching for Images}
+			\begin{enumerate}
+				\item From any page of the site you may enter a search term in the search field at the top of the page. \image{images/search 1.jpg}
+				\item After clicking the search button you will be shown all of the files that match the search term. \image{images/search 2.jpg}
+				\item Click on any file to see a larger view of the file. The description, title, and owner of the file will be displayed below. \image{images/search 3.jpg}
+			\end{enumerate}
+
+\clearpage
+\newpage
+\appendix
+\section{Database Schema} \label{app:schema}
+	The \cmd{User} and \cmd{Files} exist in a Zero-to-Many relationship. Where the User can have none or many Files.
+	
+	\image{images/diagram.png}
+\end{document}
